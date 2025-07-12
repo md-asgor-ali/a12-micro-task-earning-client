@@ -30,9 +30,34 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await googleLogin();
-      navigate(from, { replace: true });
+      const result = await googleLogin();
+      const user = result.user;
+
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: "Buyer", // default or ask later
+      };
+
+      await axiosSecure.post("/users", userData).catch((err) => {
+        if (err.response?.status === 400) {
+          console.log("User already exists in DB");
+        } else {
+          throw err;
+        }
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Logged in with Google!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      navigate("/");
     } catch (error) {
+      console.error("Google login error:", error); // Add this line
       setErrorMsg("Google login failed.");
     }
   };
@@ -41,7 +66,9 @@ const Login = () => {
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-yellow-100 px-4">
       <div className="card w-full max-w-md bg-white shadow-xl border-t-4 border-warning">
         <div className="card-body">
-          <h2 className="text-3xl font-extrabold text-center text-blue-900 mb-4">Login to Your Account</h2>
+          <h2 className="text-3xl font-extrabold text-center text-blue-900 mb-4">
+            Login to Your Account
+          </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Email */}
@@ -52,25 +79,36 @@ const Login = () => {
                 {...register("email", { required: "Email is required" })}
                 className="input input-bordered w-full"
               />
-              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <label className="label font-semibold text-blue-800">Password</label>
+              <label className="label font-semibold text-blue-800">
+                Password
+              </label>
               <input
                 type="password"
                 {...register("password", { required: "Password is required" })}
                 className="input input-bordered w-full"
               />
-              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-red-500">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Error Message */}
-            {errorMsg && <p className="text-red-600 font-semibold">{errorMsg}</p>}
+            {errorMsg && (
+              <p className="text-red-600 font-semibold">{errorMsg}</p>
+            )}
 
             {/* Submit */}
-            <button type="submit" className="btn btn-warning w-full text-white font-bold">
+            <button
+              type="submit"
+              className="btn btn-warning w-full text-white font-bold"
+            >
               Login
             </button>
           </form>
@@ -79,14 +117,20 @@ const Login = () => {
           <div className="divider text-blue-600">OR</div>
 
           {/* Google Login */}
-          <button onClick={handleGoogleLogin} className="btn btn-warning w-full text-white font-semibold">
+          <button
+            onClick={handleGoogleLogin}
+            className="btn btn-warning w-full text-white font-semibold"
+          >
             <FcGoogle className="text-xl mr-2" /> Sign in with Google
           </button>
 
           {/* Footer */}
           <p className="mt-4 text-center text-sm">
             Don’t have an account?{" "}
-            <Link to="/register" className="text-blue-700 font-semibold hover:underline">
+            <Link
+              to="/register"
+              className="text-blue-700 font-semibold hover:underline"
+            >
               Register
             </Link>
           </p>
