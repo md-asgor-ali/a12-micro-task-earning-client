@@ -12,20 +12,20 @@ const Sidebar = () => {
 
   const menu = {
     Worker: [
-      { label: "Home", path: "/dashboard/home" },
+      { label: "Home", path: "/dashboard/worker-home" },
       { label: "Task List", path: "/dashboard/tasklist" },
       { label: "My Submissions", path: "/dashboard/submissions" },
       { label: "Withdrawals", path: "/dashboard/withdrawals" },
     ],
     Buyer: [
-      { label: "Home", path: "/dashboard/home" },
+      { label: "Home", path: "/dashboard/buyer-home" },
       { label: "Add New Tasks", path: "/dashboard/add-task" },
       { label: "My Tasks", path: "/dashboard/my-tasks" },
       { label: "Purchase Coin", path: "/dashboard/purchase-coin" },
       { label: "Payment History", path: "/dashboard/payment-history" },
     ],
     Admin: [
-      { label: "Home", path: "/dashboard/home" },
+      { label: "Home", path: "/dashboard/admin-home" },
       { label: "Manage Users", path: "/dashboard/manage-users" },
       { label: "Manage Tasks", path: "/dashboard/manage-tasks" },
     ],

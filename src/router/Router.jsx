@@ -18,9 +18,11 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory";
 import ManageUsers from "../pages/Dashboard/ManageUsers";
 import ManageTasks from "../pages/Dashboard/ManageTasks";
 import TaskList from "../pages/Dashboard/TaskList";
-import Submissions from "../pages/Dashboard/Submissions";
 import Withdrawals from "../pages/Dashboard/Withdrawals";
 import Payment from "../pages/Dashboard/Payment/Payment";
+import RoleBasedHome from "../pages/Dashboard/RoleBasedHome";
+import TaskDetails from "../pages/Dashboard/TaskDetails";
+import MySubmissions from "../pages/Dashboard/MySubmissions";
 
 export const router = createBrowserRouter([
   {
@@ -53,12 +55,9 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashboardHome />,
+        element: <RoleBasedHome />,
       },
-      {
-        path: "home",
-        element: <DashboardHome />,
-      },
+
       {
         path: "buyer-home",
         element: <BuyerHome />,
@@ -104,8 +103,12 @@ export const router = createBrowserRouter([
         element: <TaskList />,
       },
       {
+        path: "/dashboard/task-details/:id",
+        element: <TaskDetails />,
+      },
+      {
         path: "submissions",
-        element: <Submissions />,
+        element: <MySubmissions />,
       },
       {
         path: "withdrawals",

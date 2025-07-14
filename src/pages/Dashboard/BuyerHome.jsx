@@ -1,27 +1,47 @@
-// BuyerHome.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import useAxios from "../../hooks/useAxios";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 
 const BuyerHome = () => {
   const { user } = useAuth();
+  const axiosSecure = useAxios();
+
   const [stats, setStats] = useState({ taskCount: 0, pendingWorkers: 0, totalPaid: 0 });
   const [pendingSubmissions, setPendingSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
   useEffect(() => {
     if (user?.email) {
-      axios.get(`/buyer/stats?email=${user.email}`).then(res => setStats(res.data));
-      axios.get(`/submissions/pending?buyerEmail=${user.email}`).then(res => setPendingSubmissions(res.data));
+      axiosSecure.get(`/buyer/stats?email=${user.email}`)
+        .then(res => setStats(res.data))
+        .catch(err => {
+          console.error("Failed to fetch buyer stats:", err);
+          setStats({ taskCount: 0, pendingWorkers: 0, totalPaid: 0 });
+        });
+
+      axiosSecure.get(`/submissions/pending?buyerEmail=${user.email}`)
+        .then(res => {
+          const data = res.data;
+          if (Array.isArray(data)) {
+            setPendingSubmissions(data);
+          } else {
+            console.warn("Invalid response for pending submissions:", data);
+            setPendingSubmissions([]);
+          }
+        })
+        .catch(err => {
+          console.error("Failed to fetch submissions:", err);
+          setPendingSubmissions([]);
+        });
     }
-  }, [user]);
+  }, [user, axiosSecure]);
 
   const handleApprove = async (submissionId, workerEmail, payableAmount) => {
     try {
-      await axios.patch(`/submissions/approve/${submissionId}`, { workerEmail, payableAmount });
+      await axiosSecure.patch(`/submissions/approve/${submissionId}`, { workerEmail, payableAmount });
       Swal.fire("Approved!", "Submission approved successfully.", "success");
-      setPendingSubmissions(pendingSubmissions.filter(s => s._id !== submissionId));
+      setPendingSubmissions(prev => prev.filter(s => s._id !== submissionId));
     } catch (err) {
       Swal.fire("Error", "Something went wrong.", "error");
     }
@@ -29,9 +49,9 @@ const BuyerHome = () => {
 
   const handleReject = async (submissionId, taskId) => {
     try {
-      await axios.patch(`/submissions/reject/${submissionId}`, { taskId });
+      await axiosSecure.patch(`/submissions/reject/${submissionId}`, { taskId });
       Swal.fire("Rejected!", "Submission rejected.", "info");
-      setPendingSubmissions(pendingSubmissions.filter(s => s._id !== submissionId));
+      setPendingSubmissions(prev => prev.filter(s => s._id !== submissionId));
     } catch (err) {
       Swal.fire("Error", "Something went wrong.", "error");
     }
