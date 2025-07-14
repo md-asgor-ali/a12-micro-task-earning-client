@@ -1,12 +1,31 @@
 import { Link, useNavigate } from "react-router";
-import { FaUserCircle } from "react-icons/fa";
-import { useContext } from "react";
+import {
+  FaUserCircle,
+  FaSignOutAlt,
+  FaCoins,
+  FaGithub,
+  FaSignInAlt,
+  FaUserPlus,
+  FaTachometerAlt,
+} from "react-icons/fa";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-// import logo from '../assets/logo.png'
+import useAxios from "../hooks/useAxios";
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
+  const axiosSecure = useAxios();
+  const [availableCoin, setAvailableCoin] = useState(0);
+
+  useEffect(() => {
+    if (user?.email) {
+      axiosSecure
+        .get(`/users/${user.email}`)
+        .then((res) => setAvailableCoin(res.data.coins || 0))
+        .catch((err) => console.error("Failed to fetch coins", err));
+    }
+  }, [user, axiosSecure]);
 
   const handleLogout = async () => {
     try {
@@ -17,83 +36,114 @@ const Navbar = () => {
     }
   };
 
-  // Optional: You can add availableCoin and role later via custom user DB logic
-
   return (
     <div className="navbar bg-blue-950 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto w-full px-4 flex justify-between items-center">
-        {/* Left Logo */}
+        {/* Logo */}
         <div className="flex items-center gap-2">
-          <Link to="/" className="text-2xl font-bold">
-            <div className="text-white">Task<span className="text-warning">Hive</span></div>
+          <Link
+            to="/"
+            className="text-2xl font-bold text-white flex items-center gap-1"
+          >
+            <FaCoins className="text-yellow-400" />
+            <span>
+              Task<span className="text-warning">Hive</span>
+            </span>
           </Link>
         </div>
 
-        {/* Center Menu */}
+        {/* Desktop Menu */}
         <div className="hidden md:flex gap-4 items-center">
           {!user ? (
             <>
-              <Link to="/login" className="btn btn-warning font-bold">Login</Link>
-              <Link to="/register" className="btn btn-warning font-bold">Register</Link>
+              <Link
+                to="/login"
+                className="btn btn-warning font-bold flex items-center gap-1"
+              >
+                <FaSignInAlt /> Login
+              </Link>
+              <Link
+                to="/register"
+                className="btn btn-warning font-bold flex items-center gap-1"
+              >
+                <FaUserPlus /> Register
+              </Link>
               <a
                 href="https://github.com/your-client-repo"
                 target="_blank"
                 rel="noreferrer"
-                className="btn btn-outline btn-warning font-bold"
+                className="btn btn-outline btn-warning font-bold flex items-center gap-1"
               >
-                Join as Developer
+                <FaGithub /> Join as Developer
               </a>
             </>
           ) : (
             <>
-              <Link to="/dashboard" className="text-white">Dashboard</Link>
-
-              {/* Optional Coin Display */}
-              {/* <div className="text-sm font-medium">
-                <span className="text-gray-600">Coins:</span>{" "}
-                <span className="text-primary font-bold">{availableCoin || 0}</span>
-              </div> */}
-
-              <div className="dropdown dropdown-end">
-                <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                  {user?.photoURL ? (
-                    <img
-                      className="w-8 h-8 rounded-full"
-                      src={user.photoURL}
-                      alt="User"
-                    />
-                  ) : (
-                    <FaUserCircle className="text-2xl text-primary" />
-                  )}
-                </label>
-                <ul
-                  tabIndex={0}
-                  className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40"
-                >
-                  <li>
-                    <p className="text-sm">
-                      {user?.displayName || "User"}
-                    </p>
-                  </li>
-                  <li>
-                    <button onClick={handleLogout}>Logout</button>
-                  </li>
-                </ul>
-              </div>
+              <Link
+                to="/dashboard"
+                className="btn btn-outline btn-warning flex items-center gap-1"
+              >
+                <FaTachometerAlt /> Dashboard
+              </Link>
 
               <a
                 href="https://github.com/your-client-repo"
                 target="_blank"
                 rel="noreferrer"
-                className="btn btn-outline btn-warning"
+                className="btn btn-outline btn-warning font-bold flex items-center gap-1"
               >
-                Join as Developer
+                <FaGithub /> Join as Developer
               </a>
+
+              {/* Avatar + Coins */}
+              <div className="flex items-center gap-2">
+                <div className="dropdown dropdown-end">
+                  <label
+                    tabIndex={0}
+                    className="btn btn-ghost btn-circle avatar"
+                  >
+                    {user?.photoURL ? (
+                      <img
+                        className="w-8 h-8 rounded-full"
+                        src={user.photoURL}
+                        alt="User"
+                      />
+                    ) : (
+                      <FaUserCircle className="text-2xl text-white" />
+                    )}
+                  </label>
+                  <ul
+                    tabIndex={0}
+                    className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-48"
+                  >
+                    <li>
+                      <p className="text-sm font-bold">
+                        {user?.displayName || "User"}
+                      </p>
+                    </li>
+                    <li>
+                      <p className="flex items-center gap-2 text-yellow-600 font-medium">
+                        <FaCoins /> {availableCoin}
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+                <span className="flex items-center gap-1 text-yellow-400 font-semibold">
+                  <FaCoins /> {availableCoin}
+                </span>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="btn btn-warning font-bold flex items-center gap-1"
+              >
+                <FaSignOutAlt /> Logout
+              </button>
             </>
           )}
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         <div className="md:hidden dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle">
             <svg
@@ -103,7 +153,12 @@ const Navbar = () => {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </label>
           <ul
@@ -112,31 +167,64 @@ const Navbar = () => {
           >
             {!user ? (
               <>
-                <li><Link className="text-warning font-bold" to="/login">Login</Link></li>
-                <li><Link className="text-warning font-bold" to="/register">Register</Link></li>
+                <li>
+                  <Link
+                    className="text-yellow-400 font-bold flex items-center gap-2"
+                    to="/login"
+                  >
+                    <FaSignInAlt /> Login
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className="text-yellow-400 font-bold flex items-center gap-2"
+                    to="/register"
+                  >
+                    <FaUserPlus /> Register
+                  </Link>
+                </li>
                 <li>
                   <a
                     href="https://github.com/your-client-repo"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-warning font-bold"
+                    className="text-yellow-400 font-bold flex items-center gap-2"
                   >
-                    Join as Developer
+                    <FaGithub /> Join as Developer
                   </a>
                 </li>
               </>
             ) : (
               <>
-                <li><Link className="text-white" to="/dashboard">Dashboard</Link></li>
-                {/* <li><span>Coins: {availableCoin || 0}</span></li> */}
-                <li><button onClick={handleLogout}>Logout</button></li>
+                <li>
+                  <Link
+                    className="text-yellow-400 flex items-center gap-2"
+                    to="/dashboard"
+                  >
+                    <FaTachometerAlt /> Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <span className="flex items-center gap-2 text-yellow-400 font-medium">
+                    <FaCoins /> {availableCoin}
+                  </span>
+                </li>
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="text-yellow-400 flex items-center gap-2"
+                  >
+                    <FaSignOutAlt /> Logout
+                  </button>
+                </li>
                 <li>
                   <a
                     href="https://github.com/your-client-repo"
                     target="_blank"
                     rel="noreferrer"
+                    className="text-yellow-400 flex items-center gap-2"
                   >
-                    Join as Developer
+                    <FaGithub /> Join as Developer
                   </a>
                 </li>
               </>

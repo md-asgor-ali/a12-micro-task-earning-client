@@ -1,9 +1,9 @@
-// src/pages/Dashboard/AdminHome.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import useAxios from "../../hooks/useAxios"; // ✅ import useAxios
 import Swal from "sweetalert2";
 
 const AdminHome = () => {
+  const axiosSecure = useAxios(); // ✅ use the custom axios hook
   const [stats, setStats] = useState({
     totalWorkers: 0,
     totalBuyers: 0,
@@ -13,35 +13,55 @@ const AdminHome = () => {
   const [withdrawRequests, setWithdrawRequests] = useState([]);
 
   useEffect(() => {
-    axios.get("/admin/stats").then((res) => setStats(res.data));
-    axios.get("/admin/withdrawals").then((res) => {
-      if (Array.isArray(res.data)) setWithdrawRequests(res.data);
-      else setWithdrawRequests([]);
-    });
-  }, []);
+    axiosSecure.get("/admin/stats")
+      .then((res) => setStats(res.data))
+      .catch((err) => console.error("Failed to fetch admin stats", err));
 
-  const handleApproveWithdrawal = async (withdrawalId, email, coin) => {
+    axiosSecure.get("/withdrawals/pending") // ✅ Updated to match your backend route
+      .then((res) => {
+        if (Array.isArray(res.data)) setWithdrawRequests(res.data);
+        else setWithdrawRequests([]);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch withdrawals", err);
+        setWithdrawRequests([]);
+      });
+  }, [axiosSecure]);
+
+  const handleApproveWithdrawal = async (withdrawalId) => {
     try {
-      await axios.patch(`/admin/withdrawals/${withdrawalId}`, { email, coin });
+      await axiosSecure.patch(`/withdrawals/approve/${withdrawalId}`);
       Swal.fire("Approved!", "Withdrawal approved successfully.", "success");
       setWithdrawRequests((prev) =>
         prev.filter((req) => req._id !== withdrawalId)
       );
     } catch (err) {
       Swal.fire("Error", "Something went wrong.", "error");
+      console.error("Withdrawal approval error:", err);
     }
   };
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Welcome, Admin</h2>
+
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="p-4 bg-white shadow rounded">Total Workers: <strong>{stats.totalWorkers}</strong></div>
-        <div className="p-4 bg-white shadow rounded">Total Buyers: <strong>{stats.totalBuyers}</strong></div>
-        <div className="p-4 bg-white shadow rounded">Total Coins: <strong>{stats.totalCoins}</strong></div>
-        <div className="p-4 bg-white shadow rounded">Total Payments: <strong>${stats.totalPayments}</strong></div>
+        <div className="p-4 bg-white shadow rounded">
+          Total Workers: <strong>{stats.totalWorkers}</strong>
+        </div>
+        <div className="p-4 bg-white shadow rounded">
+          Total Buyers: <strong>{stats.totalBuyers}</strong>
+        </div>
+        <div className="p-4 bg-white shadow rounded">
+          Total Coins: <strong>{stats.totalCoins}</strong>
+        </div>
+        <div className="p-4 bg-white shadow rounded">
+          Total Payments: <strong>{stats.totalPayments}</strong>
+        </div>
       </div>
 
+      {/* Withdrawal Requests */}
       <div className="bg-white p-4 shadow rounded">
         <h3 className="text-lg font-semibold mb-2">Withdrawal Requests</h3>
         <div className="overflow-x-auto">
@@ -71,7 +91,7 @@ const AdminHome = () => {
                   <td>
                     <button
                       className="btn btn-xs btn-success"
-                      onClick={() => handleApproveWithdrawal(req._id, req.worker_email, req.withdrawal_coin)}
+                      onClick={() => handleApproveWithdrawal(req._id)}
                     >
                       Approve
                     </button>
@@ -80,7 +100,12 @@ const AdminHome = () => {
               ))}
             </tbody>
           </table>
-          {withdrawRequests.length === 0 && <p className="mt-4 text-center text-gray-500">No pending withdrawals.</p>}
+
+          {withdrawRequests.length === 0 && (
+            <p className="mt-4 text-center text-gray-500">
+              No pending withdrawals.
+            </p>
+          )}
         </div>
       </div>
     </div>

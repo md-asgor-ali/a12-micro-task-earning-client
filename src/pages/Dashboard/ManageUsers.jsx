@@ -1,14 +1,15 @@
-// src/pages/Dashboard/ManageUsers.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import useAxios from "../../hooks/useAxios"; // ✅ Import useAxios
 import Swal from "sweetalert2";
 
 const ManageUsers = () => {
+  const axiosSecure = useAxios(); // ✅ use custom axios
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("/users")
-      .then(res => {
+    axiosSecure
+      .get("/admin/users") // ✅ backend route is /admin/users
+      .then((res) => {
         const data = res.data;
         if (Array.isArray(data)) {
           setUsers(data);
@@ -17,13 +18,13 @@ const ManageUsers = () => {
           setUsers([]);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Error fetching users:", err);
         setUsers([]);
       });
-  }, []);
+  }, [axiosSecure]);
 
-  const handleRemove = async (email) => {
+  const handleRemove = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
       text: "This user will be removed permanently!",
@@ -31,13 +32,13 @@ const ManageUsers = () => {
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete!"
+      confirmButtonText: "Yes, delete!",
     });
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`/users/${email}`);
-        setUsers(prev => prev.filter(u => u.email !== email));
+        await axiosSecure.delete(`/admin/users/${id}`);
+        setUsers((prev) => prev.filter((u) => u._id !== id));
         Swal.fire("Deleted!", "User removed successfully.", "success");
       } catch (err) {
         Swal.fire("Error!", "Failed to delete user.", "error");
@@ -45,10 +46,12 @@ const ManageUsers = () => {
     }
   };
 
-  const handleRoleChange = async (email, newRole) => {
+  const handleRoleChange = async (id, newRole) => {
     try {
-      await axios.patch(`/users/${email}/role`, { role: newRole });
-      setUsers(prev => prev.map(u => u.email === email ? { ...u, role: newRole } : u));
+      await axiosSecure.patch(`/admin/users/${id}/role`, { role: newRole });
+      setUsers((prev) =>
+        prev.map((u) => (u._id === id ? { ...u, role: newRole } : u))
+      );
       Swal.fire("Success", "Role updated", "success");
     } catch (err) {
       Swal.fire("Error", "Failed to update role", "error");
@@ -71,15 +74,23 @@ const ManageUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
-              <tr key={user.email}>
-                <td><img src={user.photoURL} alt="User" className="w-10 h-10 rounded-full" /></td>
+            {users.map((user) => (
+              <tr key={user._id}>
+                <td>
+                  <img
+                    src={user.photoURL}
+                    alt="User"
+                    className="w-10 h-10 rounded-full"
+                  />
+                </td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
                   <select
                     value={user.role}
-                    onChange={e => handleRoleChange(user.email, e.target.value)}
+                    onChange={(e) =>
+                      handleRoleChange(user._id, e.target.value)
+                    }
                     className="select select-sm"
                   >
                     <option value="Admin">Admin</option>
@@ -91,7 +102,7 @@ const ManageUsers = () => {
                 <td>
                   <button
                     className="btn btn-xs btn-error"
-                    onClick={() => handleRemove(user.email)}
+                    onClick={() => handleRemove(user._id)}
                   >
                     Remove
                   </button>
