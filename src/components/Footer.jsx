@@ -1,5 +1,5 @@
 import React from "react";
-import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaGithub, FaLinkedin, FaCoins } from "react-icons/fa";
 import { Link } from "react-router";
 
 const Footer = () => {
@@ -7,11 +7,14 @@ const Footer = () => {
     <footer className="bg-blue-950 text-white">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Logo & Description */}
-        <div>
-          <Link to="/" className="text-3xl font-bold text-white">
-            Task<span className="text-warning">Hive</span>
-          </Link>
-          <p className="mt-2 text-sm">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <FaCoins className="text-yellow-400 text-3xl" />
+            <Link to="/" className="text-3xl font-bold text-white select-none">
+              Task<span className="text-warning">Hive</span>
+            </Link>
+          </div>
+          <p className="mt-2 text-sm max-w-sm">
             A Micro-Task & Earning Platform where Workers earn and Buyers grow their reach. Powered by MERN.
           </p>
         </div>
@@ -23,7 +26,16 @@ const Footer = () => {
             <li><Link to="/login" className="hover:underline">Login</Link></li>
             <li><Link to="/register" className="hover:underline">Register</Link></li>
             <li><Link to="/dashboard" className="hover:underline">Dashboard</Link></li>
-            <li><a href="https://github.com/your-client-repo" target="_blank" rel="noreferrer" className="hover:underline">Join as Developer</a></li>
+            <li>
+              <a
+                href="https://github.com/your-client-repo"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:underline"
+              >
+                Join as Developer
+              </a>
+            </li>
           </ul>
         </div>
 

@@ -28,7 +28,7 @@ const slides = [
 
 const Hero = () => {
   return (
-    <div className="max-w-7xl mx-auto my-8 rounded-xl overflow-hidden">
+    <div className=" my-8 rounded-xl overflow-hidden  lg:px-16">
       <Swiper
         spaceBetween={30}
         centeredSlides={true}

@@ -52,7 +52,7 @@ const Testimonial = () => {
       >
         {testimonials.map((testimonial) => (
           <SwiperSlide key={testimonial.id}>
-            <div className="bg-white shadow-md rounded-lg p-6 mx-2 h-full flex flex-col items-center text-center">
+            <div className="bg-blue-50 shadow-md rounded-lg p-6 mx-2 h-full flex flex-col items-center text-center">
               <img
                 src={testimonial.image}
                 alt={testimonial.name}
