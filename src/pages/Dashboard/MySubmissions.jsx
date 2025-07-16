@@ -12,7 +12,6 @@ const MySubmissions = () => {
       axiosSecure
         .get(`/submissions/worker?email=${user.email}`)
         .then((res) => {
-          console.log("Submissions API Response:", res.data);
           if (Array.isArray(res.data)) {
             setSubmissions(res.data);
           } else {
@@ -40,33 +39,41 @@ const MySubmissions = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">My Submissions</h2>
+    <div className="px-4 sm:px-6 md:px-8 py-6 max-w-6xl mx-auto">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center">
+        My Submissions
+      </h2>
 
       {submissions.length === 0 ? (
-        <p className="text-gray-600">You haven’t submitted any tasks yet.</p>
+        <p className="text-gray-600 text-sm md:text-base text-center">
+          You haven’t submitted any tasks yet.
+        </p>
       ) : (
-        <div className="overflow-x-auto bg-white p-4 shadow rounded">
-          <table className="table w-full">
+        <div className="overflow-x-auto bg-white p-4 rounded shadow">
+          <table className="table w-full text-sm md:text-base">
             <thead>
-              <tr>
-                <th>#</th>
-                <th>Task Title</th>
-                <th>Payable (Coins)</th>
-                <th>Buyer</th>
-                <th>Submitted At</th>
-                <th>Status</th>
+              <tr className="bg-gray-100 text-left">
+                <th className="p-2">#</th>
+                <th className="p-2">Task Title</th>
+                <th className="p-2">Pay</th>
+                <th className="p-2">Buyer</th>
+                <th className="p-2">Submitted</th>
+                <th className="p-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {submissions.map((sub, index) => (
-                <tr key={sub._id}>
-                  <td>{index + 1}</td>
-                  <td>{sub.task_title}</td>
-                  <td>{sub.payable_amount}</td>
-                  <td>{sub.buyer_name}</td>
-                  <td>{new Date(sub.submittedAt).toLocaleDateString()}</td>
-                  <td className={getStatusColor(sub.status)}>{sub.status}</td>
+                <tr key={sub._id} className="hover:bg-gray-50">
+                  <td className="p-2">{index + 1}</td>
+                  <td className="p-2 break-words max-w-xs">{sub.task_title}</td>
+                  <td className="p-2">{sub.payable_amount}</td>
+                  <td className="p-2">{sub.buyer_name || "N/A"}</td>
+                  <td className="p-2">
+                    {new Date(sub.submittedAt).toLocaleDateString()}
+                  </td>
+                  <td className={`p-2 ${getStatusColor(sub.status)}`}>
+                    {sub.status}
+                  </td>
                 </tr>
               ))}
             </tbody>

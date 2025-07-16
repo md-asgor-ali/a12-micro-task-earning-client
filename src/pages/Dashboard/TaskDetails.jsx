@@ -7,7 +7,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 const TaskDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const axiosSecure = useAxiosSecure(); // ✅ use custom axios hook
+  const axiosSecure = useAxiosSecure(); 
   const [task, setTask] = useState(null);
   const [submissionDetails, setSubmissionDetails] = useState("");
 

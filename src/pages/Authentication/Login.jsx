@@ -26,7 +26,7 @@ const Login = () => {
     setErrorMsg("");
     try {
       await signIn(data.email, data.password);
-
+      console.log(data.email, data.password)
       Swal.fire({
         icon: "success",
         title: "Login Successful",

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import useRole from "../../hooks/useRole";
 import { FaCoins } from "react-icons/fa";
+import { Link } from "react-router";
 
 const Topbar = () => {
   const { user } = useContext(AuthContext);
@@ -10,12 +11,14 @@ const Topbar = () => {
   return (
     <div className="flex items-center justify-between p-4 bg-blue-950 text-white shadow">
       {/* Left: Logo */}
-      <div className="flex items-center gap-2 text-2xl font-bold">
-        <FaCoins className="text-yellow-400" />
-        <span>
-          Task<span className="text-yellow-400">Hive</span>
-        </span>
-      </div>
+      <Link to="/">
+        <div className="flex items-center gap-2 text-2xl font-bold">
+          <FaCoins className="text-yellow-400" />
+          <span>
+            Task<span className="text-yellow-400">Hive</span>
+          </span>
+        </div>
+      </Link>
 
       {/* Right: User Info + Notification */}
       <div className="flex items-center gap-4">

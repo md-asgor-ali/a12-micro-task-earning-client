@@ -16,25 +16,19 @@ const WorkerHome = () => {
 
   useEffect(() => {
     if (user?.email) {
-      // Fetch worker stats
       axiosSecure
         .get(`/worker/stats?email=${user.email}`)
-        .then((res) => {
-          setStats(res.data);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch worker stats", err);
-        });
+        .then((res) => setStats(res.data))
+        .catch((err) => console.error("Failed to fetch worker stats", err));
 
-      // Fetch approved submissions
       axiosSecure
         .get(`/submissions/worker/approved?email=${user.email}`)
         .then((res) => {
           if (Array.isArray(res.data)) {
             setApprovedSubmissions(res.data);
           } else {
-            console.warn("Invalid approved submissions format", res.data);
             setApprovedSubmissions([]);
+            console.warn("Unexpected format", res.data);
           }
         })
         .catch((err) => {
@@ -45,52 +39,52 @@ const WorkerHome = () => {
   }, [user, axiosSecure]);
 
   return (
-    <div className="space-y-8">
+    <div className="px-4 md:px-8 py-6 space-y-8">
       {/* Welcome */}
-      <h2 className="text-2xl font-bold text-center">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center">
         Welcome, {user?.displayName || "Worker"}
       </h2>
 
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="p-4 bg-white shadow rounded text-center">
-          <p>Total Submissions</p>
-          <h3 className="text-xl font-bold">{stats.totalSubmissions}</h3>
+          <p className="text-sm md:text-base text-gray-600">Total Submissions</p>
+          <h3 className="text-xl md:text-2xl font-bold">{stats.totalSubmissions}</h3>
         </div>
         <div className="p-4 bg-white shadow rounded text-center">
-          <p>Pending Submissions</p>
-          <h3 className="text-xl font-bold">{stats.pendingSubmissions}</h3>
+          <p className="text-sm md:text-base text-gray-600">Pending Submissions</p>
+          <h3 className="text-xl md:text-2xl font-bold">{stats.pendingSubmissions}</h3>
         </div>
         <div className="p-4 bg-white shadow rounded text-center">
-          <p>Total Earnings</p>
-          <h3 className="text-xl font-bold">{stats.totalEarnings} coins</h3>
+          <p className="text-sm md:text-base text-gray-600">Total Earnings</p>
+          <h3 className="text-xl md:text-2xl font-bold">{stats.totalEarnings} coins</h3>
         </div>
       </div>
 
-      {/* Approved Submissions Table */}
+      {/* Approved Submissions */}
       <div className="bg-white p-4 shadow rounded">
-        <h3 className="text-lg font-semibold mb-4">Approved Submissions</h3>
-        {Array.isArray(approvedSubmissions) && approvedSubmissions.length === 0 ? (
-          <p>No approved submissions yet.</p>
+        <h3 className="text-lg md:text-xl font-semibold mb-4">Approved Submissions</h3>
+        {approvedSubmissions.length === 0 ? (
+          <p className="text-gray-500 text-sm md:text-base">No approved submissions yet.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="table w-full">
+            <table className="table w-full text-sm md:text-base">
               <thead>
-                <tr>
-                  <th>Task Title</th>
-                  <th>Payable Amount</th>
-                  <th>Buyer Name</th>
-                  <th>Status</th>
+                <tr className="bg-gray-100 text-left">
+                  <th className="p-2">Task Title</th>
+                  <th className="p-2">Pay</th>
+                  <th className="p-2">Buyer</th>
+                  <th className="p-2">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {approvedSubmissions.map((sub, index) => (
-                  <tr key={index}>
-                    <td>{sub.task_title}</td>
-                    <td>{sub.payable_amount} coins</td>
-                    <td>{sub.buyer_name}</td>
-                    <td>
-                      <span className="badge badge-success text-white">
+                {approvedSubmissions.map((sub, idx) => (
+                  <tr key={idx} className="hover:bg-gray-50">
+                    <td className="p-2">{sub.task_title}</td>
+                    <td className="p-2">{sub.payable_amount} coins</td>
+                    <td className="p-2">{sub.buyer_name || "N/A"}</td>
+                    <td className="p-2">
+                      <span className="badge badge-success text-white text-xs sm:text-sm">
                         {sub.status}
                       </span>
                     </td>

@@ -15,25 +15,14 @@ const BuyerHome = () => {
     if (user?.email) {
       axiosSecure.get(`/buyer/stats?email=${user.email}`)
         .then(res => setStats(res.data))
-        .catch(err => {
-          console.error("Failed to fetch buyer stats:", err);
-          setStats({ taskCount: 0, pendingWorkers: 0, totalPaid: 0 });
-        });
+        .catch(() => setStats({ taskCount: 0, pendingWorkers: 0, totalPaid: 0 }));
 
       axiosSecure.get(`/submissions/pending?buyerEmail=${user.email}`)
         .then(res => {
-          const data = res.data;
-          if (Array.isArray(data)) {
-            setPendingSubmissions(data);
-          } else {
-            console.warn("Invalid response for pending submissions:", data);
-            setPendingSubmissions([]);
-          }
+          if (Array.isArray(res.data)) setPendingSubmissions(res.data);
+          else setPendingSubmissions([]);
         })
-        .catch(err => {
-          console.error("Failed to fetch submissions:", err);
-          setPendingSubmissions([]);
-        });
+        .catch(() => setPendingSubmissions([]));
     }
   }, [user, axiosSecure]);
 
@@ -42,7 +31,7 @@ const BuyerHome = () => {
       await axiosSecure.patch(`/submissions/approve/${submissionId}`, { workerEmail, payableAmount });
       Swal.fire("Approved!", "Submission approved successfully.", "success");
       setPendingSubmissions(prev => prev.filter(s => s._id !== submissionId));
-    } catch (err) {
+    } catch {
       Swal.fire("Error", "Something went wrong.", "error");
     }
   };
@@ -52,51 +41,62 @@ const BuyerHome = () => {
       await axiosSecure.patch(`/submissions/reject/${submissionId}`, { taskId });
       Swal.fire("Rejected!", "Submission rejected.", "info");
       setPendingSubmissions(prev => prev.filter(s => s._id !== submissionId));
-    } catch (err) {
+    } catch {
       Swal.fire("Error", "Something went wrong.", "error");
     }
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Welcome, {user?.displayName}</h2>
+    <div className="px-4 sm:px-6 md:px-8 py-6 max-w-7xl mx-auto space-y-8">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center">
+        Welcome, {user?.displayName || "Buyer"}
+      </h2>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white shadow rounded">Total Tasks: <strong>{stats.taskCount}</strong></div>
-        <div className="p-4 bg-white shadow rounded">Pending Workers: <strong>{stats.pendingWorkers}</strong></div>
-        <div className="p-4 bg-white shadow rounded">Total Paid: <strong>{stats.totalPaid} coins</strong></div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="p-4 bg-white shadow rounded text-center">
+          <p className="text-sm md:text-base">Total Tasks</p>
+          <h3 className="text-xl font-bold">{stats.taskCount}</h3>
+        </div>
+        <div className="p-4 bg-white shadow rounded text-center">
+          <p className="text-sm md:text-base">Pending Workers</p>
+          <h3 className="text-xl font-bold">{stats.pendingWorkers}</h3>
+        </div>
+        <div className="p-4 bg-white shadow rounded text-center">
+          <p className="text-sm md:text-base">Total Paid</p>
+          <h3 className="text-xl font-bold">{stats.totalPaid} coins</h3>
+        </div>
       </div>
 
-      {/* Task to Review Table */}
-      <div className="bg-white p-4 shadow rounded">
-        <h3 className="text-lg font-semibold mb-2">Tasks to Review</h3>
-        <div className="overflow-x-auto">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Worker Name</th>
-                <th>Task Title</th>
-                <th>Payable Amount</th>
-                <th>Submission</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingSubmissions.map(sub => (
-                <tr key={sub._id}>
-                  <td>{sub.worker_name}</td>
-                  <td>{sub.task_title}</td>
-                  <td>{sub.payable_amount}</td>
-                  <td>
-                    <button
-                      className="btn btn-xs btn-outline"
-                      onClick={() => setSelectedSubmission(sub)}
-                    >
-                      View Submission
-                    </button>
-                  </td>
-                  <td className="flex gap-2">
+      {/* Tasks to Review Table */}
+      <div className="bg-white p-4 shadow rounded overflow-x-auto">
+        <h3 className="text-lg font-semibold mb-3">Tasks to Review</h3>
+        <table className="table w-full text-sm md:text-base">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-2 text-left">Worker</th>
+              <th className="p-2 text-left">Task</th>
+              <th className="p-2 text-left">Pay</th>
+              <th className="p-2 text-left">Submission</th>
+              <th className="p-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pendingSubmissions.map(sub => (
+              <tr key={sub._id} className="hover:bg-gray-50">
+                <td className="p-2">{sub.worker_name}</td>
+                <td className="p-2 break-words max-w-xs">{sub.task_title}</td>
+                <td className="p-2">{sub.payable_amount}</td>
+                <td className="p-2">
+                  <button
+                    className="btn btn-xs btn-outline"
+                    onClick={() => setSelectedSubmission(sub)}
+                  >
+                    View
+                  </button>
+                </td>
+                <td className="p-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       className="btn btn-xs btn-success"
                       onClick={() => handleApprove(sub._id, sub.worker_email, sub.payable_amount)}
@@ -109,22 +109,22 @@ const BuyerHome = () => {
                     >
                       Reject
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Modal */}
       {selectedSubmission && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow w-full max-w-md">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+          <div className="bg-white p-6 rounded shadow w-full max-w-md max-h-[80vh] overflow-y-auto">
             <h3 className="text-lg font-bold mb-2">Submission Detail</h3>
-            <p>{selectedSubmission.submission_detail}</p>
+            <p className="text-sm md:text-base">{selectedSubmission.submission_detail}</p>
             <button
-              className="mt-4 btn btn-sm btn-warning"
+              className="mt-4 btn btn-sm btn-warning w-full"
               onClick={() => setSelectedSubmission(null)}
             >
               Close

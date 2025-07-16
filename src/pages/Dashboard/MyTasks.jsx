@@ -3,13 +3,11 @@ import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-
 const MyTasks = () => {
-  const { user, loading } = useAuth(); // If your hook has loading
+  const { user, loading } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [tasks, setTasks] = useState([]);
 
-  // ❗️Prevent running before user is available
   useEffect(() => {
     if (!user?.email) return;
 
@@ -94,27 +92,28 @@ const MyTasks = () => {
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">My Tasks</h2>
-      <div className="overflow-x-auto">
-        <table className="table table-zebra w-full">
+    <div className="px-4 sm:px-6 md:px-8 py-6 max-w-7xl mx-auto">
+      <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">My Tasks</h2>
+
+      <div className="overflow-x-auto bg-white p-4 rounded shadow">
+        <table className="table w-full text-sm md:text-base">
           <thead>
-            <tr>
-              <th>Title</th>
-              <th>Detail</th>
-              <th>Submit Info</th>
-              <th>Deadline</th>
-              <th>Action</th>
+            <tr className="bg-gray-100">
+              <th className="p-2">Title</th>
+              <th className="p-2">Detail</th>
+              <th className="p-2">Submit Info</th>
+              <th className="p-2">Deadline</th>
+              <th className="p-2">Action</th>
             </tr>
           </thead>
           <tbody>
             {tasks.map((task) => (
-              <tr key={task._id}>
-                <td>{task.task_title}</td>
-                <td>{task.task_detail}</td>
-                <td>{task.submission_info}</td>
-                <td>{task.completion_date}</td>
-                <td className="space-x-2">
+              <tr key={task._id} className="hover:bg-gray-50">
+                <td className="break-words max-w-[180px] p-2">{task.task_title}</td>
+                <td className="break-words max-w-xs p-2">{task.task_detail}</td>
+                <td className="break-words max-w-xs p-2">{task.submission_info}</td>
+                <td className="p-2">{task.completion_date}</td>
+                <td className="p-2 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleUpdate(task)}
                     className="btn btn-sm btn-info text-white"
