@@ -3,7 +3,8 @@
 import { Outlet } from "react-router";
 import Topbar from "../pages/Dashboard/Topbar";
 import Sidebar from "../pages/Dashboard/Sidebar";
-import Footer from "../pages/Dashboard/Footer";
+import Footer from "../components/Footer";
+
 
 
 
