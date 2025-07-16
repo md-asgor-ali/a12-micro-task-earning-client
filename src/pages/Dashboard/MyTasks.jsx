@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
-import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+
 
 const MyTasks = () => {
   const { user, loading } = useAuth(); // If your hook has loading
-  const axiosSecure = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [tasks, setTasks] = useState([]);
 
   // ❗️Prevent running before user is available

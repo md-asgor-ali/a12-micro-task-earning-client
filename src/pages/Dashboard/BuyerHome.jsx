@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const BuyerHome = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const [stats, setStats] = useState({ taskCount: 0, pendingWorkers: 0, totalPaid: 0 });
   const [pendingSubmissions, setPendingSubmissions] = useState([]);

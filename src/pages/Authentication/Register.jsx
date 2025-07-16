@@ -1,19 +1,16 @@
-// ========== FRONTEND: Register.jsx ==========
-
 import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
-import useAxios from "../../hooks/useAxios";
 import Swal from "sweetalert2";
-import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
+import { updateProfile } from "firebase/auth"; // ✅ Firebase profile update
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Register = () => {
-  const { createUser, updateUserProfile, googleLogin } =
-    useContext(AuthContext);
+  const { createUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const axiosSecure = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const [profilePic, setProfilePic] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -26,6 +23,7 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
+  // Image upload handler
   const handleImageUpload = async (e) => {
     const image = e.target.files[0];
     if (!image) return;
@@ -36,9 +34,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${
-          import.meta.env.VITE_image_upload_key
-        }`,
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`,
         formData
       );
       setProfilePic(res.data.data.url);
@@ -50,6 +46,8 @@ const Register = () => {
     }
   };
 
+
+  // Handle form submission
   const onSubmit = async (data) => {
     setErrorMsg("");
 
@@ -59,68 +57,44 @@ const Register = () => {
     }
 
     try {
+      // Firebase Auth create user
       const result = await createUser(data.email, data.password);
+      console.log(result.user);
 
-      await updateUserProfile({
+      // Update Firebase profile
+      await updateProfile(result.user, {
         displayName: data.name,
         photoURL: profilePic,
       });
 
+      // Construct user data for backend
       const userData = {
         name: data.name,
         email: data.email,
         photoURL: profilePic,
         role: data.role,
       };
+      console.log()
 
+      // Send to backend — backend will assign coins based on role
       await axiosSecure.post("/users", userData);
 
       Swal.fire({
         icon: "success",
         title: "Registration Successful",
-        text: `${data.role} registered with default coin!`,
+        text: `${data.role} registered with default coins!`,
         confirmButtonColor: "#f59e0b",
       });
 
       reset();
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
-      console.error(error);
-      setErrorMsg(error.message || "Registration failed");
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await googleLogin();
-      const user = result.user;
-
-      const userData = {
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        role: "Buyer", // default or ask later
-      };
-
-      await axiosSecure.post("/users", userData).catch((err) => {
-        if (err.response?.status === 400) {
-          console.log("User already exists in DB");
-        } else {
-          throw err;
-        }
-      });
-
-      Swal.fire({
-        icon: "success",
-        title: "Logged in with Google!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      navigate("/");
-    } catch (error) {
-      console.error("Google login error:", error); // Add this line
-      setErrorMsg("Google login failed.");
+      console.error("Registration error:", error);
+      if (error.code === "auth/email-already-in-use") {
+        setErrorMsg("Email already exists. Try logging in instead.");
+      } else {
+        setErrorMsg(error.message || "Registration failed");
+      }
     }
   };
 
@@ -133,6 +107,7 @@ const Register = () => {
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Name */}
             <div>
               <label className="label font-semibold text-blue-800">Name</label>
               <input
@@ -145,6 +120,7 @@ const Register = () => {
               )}
             </div>
 
+            {/* Profile Picture */}
             <div>
               <label className="label font-semibold text-blue-800">
                 Profile Picture
@@ -157,8 +133,16 @@ const Register = () => {
               {uploading && (
                 <p className="text-sm text-blue-500">Uploading...</p>
               )}
+              {profilePic && (
+                <img
+                  src={profilePic}
+                  alt="Preview"
+                  className="w-16 h-16 rounded-full border mt-2"
+                />
+              )}
             </div>
 
+            {/* Email */}
             <div>
               <label className="label font-semibold text-blue-800">Email</label>
               <input
@@ -177,6 +161,7 @@ const Register = () => {
               )}
             </div>
 
+            {/* Password */}
             <div>
               <label className="label font-semibold text-blue-800">
                 Password
@@ -189,6 +174,11 @@ const Register = () => {
                     value: 6,
                     message: "Password must be at least 6 characters",
                   },
+                  pattern: {
+                    value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/,
+                    message:
+                      "Include uppercase, number & special character (!@#$%)",
+                  },
                 })}
                 className="input input-bordered w-full"
               />
@@ -197,6 +187,7 @@ const Register = () => {
               )}
             </div>
 
+            {/* Role */}
             <div>
               <label className="label font-semibold text-blue-800">Role</label>
               <select
@@ -210,12 +201,17 @@ const Register = () => {
               {errors.role && (
                 <p className="text-red-500">{errors.role.message}</p>
               )}
+              <small className="text-gray-500">
+                Workers get 10 coins, Buyers get 50 coins upon registration.
+              </small>
             </div>
 
+            {/* Error Message */}
             {errorMsg && (
-              <p className="text-red-600 font-semibold">{errorMsg}</p>
+              <p className="text-red-600 font-semibold text-center">{errorMsg}</p>
             )}
 
+            {/* Submit Button */}
             <button
               type="submit"
               className="btn btn-warning w-full text-white font-bold"
@@ -223,15 +219,6 @@ const Register = () => {
               Register
             </button>
           </form>
-
-          <div className="divider text-blue-600">OR</div>
-
-          <button
-            onClick={handleGoogleLogin}
-            className="btn btn-warning w-full text-white font-semibold"
-          >
-            <FcGoogle className="text-xl mr-2" /> Sign up with Google
-          </button>
 
           <p className="mt-4 text-center text-sm">
             Already have an account?{" "}

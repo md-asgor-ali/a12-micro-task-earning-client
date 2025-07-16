@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const ManageTasks = () => {
-  const axiosSecure = useAxios(); // use your secure Axios instance
+  const axiosSecure = useAxiosSecure(); // use your secure Axios instance
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {

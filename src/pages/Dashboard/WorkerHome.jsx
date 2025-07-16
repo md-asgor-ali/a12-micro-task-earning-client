@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const WorkerHome = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxios();
+  const axiosSecure = useAxiosSecure();
 
   const [stats, setStats] = useState({
     totalSubmissions: 0,

@@ -1,13 +1,13 @@
 import { useParams } from "react-router";
 import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios"; // ✅ use custom axios instance
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const TaskDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const axiosSecure = useAxios(); // ✅ use custom axios hook
+  const axiosSecure = useAxiosSecure(); // ✅ use custom axios hook
   const [task, setTask] = useState(null);
   const [submissionDetails, setSubmissionDetails] = useState("");
 

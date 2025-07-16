@@ -3,13 +3,16 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate, useLocation } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
 import { FcGoogle } from "react-icons/fc";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Login = () => {
   const { signIn, googleLogin } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/dashboard"; // 🔁 redirect to dashboard after login
 
+  const axiosSecure = useAxiosSecure();
   const {
     register,
     handleSubmit,
@@ -18,17 +21,29 @@ const Login = () => {
 
   const [errorMsg, setErrorMsg] = useState("");
 
+  // ✅ Handle email/password login
   const onSubmit = async (data) => {
     setErrorMsg("");
     try {
       await signIn(data.email, data.password);
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
       navigate(from, { replace: true });
     } catch (error) {
-      setErrorMsg("Login failed. Check your credentials.");
+      setErrorMsg("Invalid email or password.");
     }
   };
 
+  // ✅ Handle Google Login
   const handleGoogleLogin = async () => {
+    setErrorMsg("");
+
     try {
       const result = await googleLogin();
       const user = result.user;
@@ -37,12 +52,13 @@ const Login = () => {
         name: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        role: "Buyer", // default or ask later
+        role: "user", // Default role 
       };
 
+      // Try inserting into DB if user doesn't exist
       await axiosSecure.post("/users", userData).catch((err) => {
         if (err.response?.status === 400) {
-          console.log("User already exists in DB");
+          // User already exists — skip
         } else {
           throw err;
         }
@@ -55,10 +71,10 @@ const Login = () => {
         showConfirmButton: false,
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Google login error:", error); // Add this line
-      setErrorMsg("Google login failed.");
+      console.error("Google login failed:", error);
+      setErrorMsg("Google sign-in failed. Try again.");
     }
   };
 
@@ -76,7 +92,13 @@ const Login = () => {
               <label className="label font-semibold text-blue-800">Email</label>
               <input
                 type="email"
-                {...register("email", { required: "Email is required" })}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Enter a valid email address",
+                  },
+                })}
                 className="input input-bordered w-full"
               />
               {errors.email && (
@@ -91,7 +113,13 @@ const Login = () => {
               </label>
               <input
                 type="password"
-                {...register("password", { required: "Password is required" })}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Minimum 6 characters required",
+                  },
+                })}
                 className="input input-bordered w-full"
               />
               {errors.password && (
@@ -101,7 +129,7 @@ const Login = () => {
 
             {/* Error Message */}
             {errorMsg && (
-              <p className="text-red-600 font-semibold">{errorMsg}</p>
+              <p className="text-red-600 font-semibold text-center">{errorMsg}</p>
             )}
 
             {/* Submit */}
@@ -119,9 +147,9 @@ const Login = () => {
           {/* Google Login */}
           <button
             onClick={handleGoogleLogin}
-            className="btn btn-warning w-full text-white font-semibold"
+            className="btn btn-warning w-full text-white font-semibold flex items-center justify-center gap-2"
           >
-            <FcGoogle className="text-xl mr-2" /> Sign in with Google
+            <FcGoogle className="text-xl" /> Sign in with Google
           </button>
 
           {/* Footer */}

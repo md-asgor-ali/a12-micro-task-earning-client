@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios"; // ✅ Import useAxios
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const ManageUsers = () => {
-  const axiosSecure = useAxios(); // ✅ use custom axios
+  const axiosSecure = useAxiosSecure(); 
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

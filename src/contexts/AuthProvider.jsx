@@ -12,20 +12,22 @@ import {
 import { auth } from "../firebase/firebase.config";
 
 const googleProvider = new GoogleAuthProvider();
+
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const signIn = (email, password) => {
-    setLoading(true)
+    setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const updateUserProfile = profileInfo => {
-        return updateProfile(auth.currentUser, profileInfo);
-    }
+  const updateUserProfile = (profileInfo) => {
+    return updateProfile(auth.currentUser, profileInfo);
+  };
 
   const logOut = () => {
+    localStorage.removeItem("access-token"); // 🔒 Clean token
     return signOut(auth);
   };
 
@@ -34,20 +36,25 @@ const AuthProvider = ({ children }) => {
   };
 
   const createUser = (email, password) => {
-    setLoading(true)
+    setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
   useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-    //   console.log("user in the auth state change", currentUser);
       setLoading(false);
+
+      if (currentUser) {
+        currentUser.getIdToken().then((token) => {
+          localStorage.setItem("access-token", token); // ✅ store Firebase JWT
+        });
+      } else {
+        localStorage.removeItem("access-token");
+      }
     });
 
-    return () => {
-      unSubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   const authInfo = {
@@ -60,7 +67,11 @@ const AuthProvider = ({ children }) => {
     loading,
   };
 
-  return <AuthContext value={authInfo}>{children}</AuthContext>;
+  return (
+    <AuthContext.Provider value={authInfo}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

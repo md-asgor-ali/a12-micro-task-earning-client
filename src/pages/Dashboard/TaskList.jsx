@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import useAxios from "../../hooks/useAxios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const axiosSecure = useAxios(); // ✅ use custom axios instance
+  const axiosSecure = useAxiosSecure(); // ✅ use custom axios instance
 
   useEffect(() => {
     const fetchTasks = async () => {

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios"; // ✅ import useAxios
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AdminHome = () => {
-  const axiosSecure = useAxios(); // ✅ use the custom axios hook
+  const axiosSecure = useAxiosSecure(); 
   const [stats, setStats] = useState({
     totalWorkers: 0,
     totalBuyers: 0,

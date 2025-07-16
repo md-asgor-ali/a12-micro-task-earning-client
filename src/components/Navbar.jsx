@@ -10,12 +10,13 @@ import {
 } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import useAxios from "../hooks/useAxios";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
-  const axiosSecure = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [availableCoin, setAvailableCoin] = useState(0);
 
   useEffect(() => {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import useAxios from "../../hooks/useAxios";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const MySubmissions = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxios();
+  const axiosSecure = useAxiosSecure();
   const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {

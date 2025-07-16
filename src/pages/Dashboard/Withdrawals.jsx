@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import useAxios from "../../hooks/useAxios"; // ✅ Import useAxios
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Withdrawals = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxios(); // ✅ use secure axios instance
+  const axiosSecure = useAxiosSecure(); // ✅ use secure axios instance
   const [coins, setCoins] = useState(0);
   const [coinToWithdraw, setCoinToWithdraw] = useState("");
   const [withdrawalAmount, setWithdrawalAmount] = useState(0);
