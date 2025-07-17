@@ -25,20 +25,20 @@ const Sidebar = () => {
 
   const menu = {
     Worker: [
-      { label: "Home", path: "/dashboard/worker-home", icon: <FaHome /> },
+      { label: "Worker Home", path: "/dashboard/worker-home", icon: <FaHome /> },
       { label: "Task List", path: "/dashboard/tasklist", icon: <FaTasks /> },
       { label: "My Submissions", path: "/dashboard/submissions", icon: <FaClipboardList /> },
       { label: "Withdrawals", path: "/dashboard/withdrawals", icon: <FaMoneyCheckAlt /> },
     ],
     Buyer: [
-      { label: "Home", path: "/dashboard/buyer-home", icon: <FaHome /> },
+      { label: "Buyer Home", path: "/dashboard/buyer-home", icon: <FaHome /> },
       { label: "Add New Tasks", path: "/dashboard/add-task", icon: <MdOutlineAddTask /> },
       { label: "My Tasks", path: "/dashboard/my-tasks", icon: <FaTasks /> },
       { label: "Purchase Coin", path: "/dashboard/purchase-coin", icon: <FaCoins /> },
       { label: "Payment History", path: "/dashboard/payment-history", icon: <FaHistory /> },
     ],
     Admin: [
-      { label: "Home", path: "/dashboard/admin-home", icon: <FaHome /> },
+      { label: "Admin Home", path: "/dashboard/admin-home", icon: <FaHome /> },
       { label: "Manage Users", path: "/dashboard/manage-users", icon: <FaUsers /> },
       { label: "Manage Tasks", path: "/dashboard/manage-tasks", icon: <FaTasks /> },
     ],

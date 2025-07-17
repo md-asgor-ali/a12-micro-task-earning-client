@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import useRole from "../../hooks/useRole";
-import { FaCoins } from "react-icons/fa";
+import { FaCoins, FaHome } from "react-icons/fa";
 import { Link } from "react-router";
 
 const Topbar = () => {
@@ -20,6 +20,12 @@ const Topbar = () => {
         </div>
       </Link>
 
+      {/* Middle: Home Link */}
+      <Link to="/" className="flex items-center gap-1 text-sm md:text-base font-medium hover:text-yellow-400 duration-200">
+        <FaHome className="text-yellow-400" />
+        Home
+      </Link>
+
       {/* Right: User Info + Notification */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1 text-sm font-semibold">
@@ -27,7 +33,7 @@ const Topbar = () => {
           <span>{coins || 0} Coins</span>
         </div>
 
-        <div className="text-right">
+        <div className="text-right hidden sm:block">
           <p className="font-medium">{user?.displayName || "User"}</p>
           <p className="text-xs text-gray-300 capitalize">{role}</p>
         </div>
@@ -39,9 +45,7 @@ const Topbar = () => {
         />
 
         <button className="btn btn-circle btn-ghost text-white text-xl relative">
-          <span role="img" aria-label="Notifications">
-            🔔
-          </span>
+          <span role="img" aria-label="Notifications">🔔</span>
           <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
         </button>
       </div>

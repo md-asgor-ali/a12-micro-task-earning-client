@@ -11,6 +11,8 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
+import useRole from "../hooks/useRole";
+ 
 
 
 const Navbar = () => {
@@ -18,6 +20,14 @@ const Navbar = () => {
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const [availableCoin, setAvailableCoin] = useState(0);
+   const { role } = useRole();
+
+     const dashboardLink =
+    role === "admin"
+      ? "/dashboard/admin-home"
+      : role === "buyer"
+      ? "/dashboard/buyer-home"
+      : "/dashboard/worker-home";
 
   useEffect(() => {
     if (user?.email) {
@@ -81,7 +91,7 @@ const Navbar = () => {
           ) : (
             <>
               <Link
-                to="/dashboard"
+                to={dashboardLink}
                 className="btn btn-outline btn-warning flex items-center gap-1"
               >
                 <FaTachometerAlt /> Dashboard
@@ -200,7 +210,7 @@ const Navbar = () => {
                 <li>
                   <Link
                     className="text-yellow-400 flex items-center gap-2"
-                    to="/dashboard"
+                    to={dashboardLink}
                   >
                     <FaTachometerAlt /> Dashboard
                   </Link>
