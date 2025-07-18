@@ -4,7 +4,7 @@ import useAuth from "./useAuth";
 import { useEffect } from "react";
 
 const axiosSecure = axios.create({
-  baseURL: `a12-micro-task-earning-server.vercel.app`,
+  baseURL: `https://a12-micro-task-earning-server.vercel.app`,
   headers: {
     "Content-Type": "application/json",
   },
