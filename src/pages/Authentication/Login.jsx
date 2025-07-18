@@ -5,12 +5,23 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useRole from "../../hooks/useRole";
 
 const Login = () => {
   const { signIn, googleLogin } = useContext(AuthContext);
+  const { role } = useRole();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/dashboard"; // 🔁 redirect to dashboard after login
+
+  // Default dashboard redirect based on role
+  const dashboardLink =
+    role === "admin"
+      ? "/dashboard/admin-home"
+      : role === "buyer"
+      ? "/dashboard/buyer-home"
+      : "/dashboard/worker-home";
+
+  const from = location.state?.from?.pathname || dashboardLink;
 
   const axiosSecure = useAxiosSecure();
   const {
@@ -21,12 +32,12 @@ const Login = () => {
 
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ✅ Handle email/password login
+  // ✅ Email/password login handler
   const onSubmit = async (data) => {
     setErrorMsg("");
     try {
       await signIn(data.email, data.password);
-      console.log(data.email, data.password)
+
       Swal.fire({
         icon: "success",
         title: "Login Successful",
@@ -40,10 +51,9 @@ const Login = () => {
     }
   };
 
-  // ✅ Handle Google Login
+  // ✅ Google login handler
   const handleGoogleLogin = async () => {
     setErrorMsg("");
-
     try {
       const result = await googleLogin();
       const user = result.user;
@@ -52,14 +62,12 @@ const Login = () => {
         name: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        role: "user", // Default role 
+        role: "user", // default role
       };
 
-      // Try inserting into DB if user doesn't exist
+      // Save to DB if not exists
       await axiosSecure.post("/users", userData).catch((err) => {
-        if (err.response?.status === 400) {
-          // User already exists — skip
-        } else {
+        if (err.response?.status !== 400) {
           throw err;
         }
       });
@@ -71,7 +79,7 @@ const Login = () => {
         showConfirmButton: false,
       });
 
-      navigate("/dashboard");
+      navigate(dashboardLink);
     } catch (error) {
       console.error("Google login failed:", error);
       setErrorMsg("Google sign-in failed. Try again.");
@@ -108,9 +116,7 @@ const Login = () => {
 
             {/* Password */}
             <div>
-              <label className="label font-semibold text-blue-800">
-                Password
-              </label>
+              <label className="label font-semibold text-blue-800">Password</label>
               <input
                 type="password"
                 {...register("password", {
@@ -127,7 +133,7 @@ const Login = () => {
               )}
             </div>
 
-            {/* Error Message */}
+            {/* Error message */}
             {errorMsg && (
               <p className="text-red-600 font-semibold text-center">{errorMsg}</p>
             )}
@@ -141,10 +147,9 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="divider text-blue-600">OR</div>
 
-          {/* Google Login */}
+          {/* Google Sign-in */}
           <button
             onClick={handleGoogleLogin}
             className="btn btn-warning w-full text-white font-semibold flex items-center justify-center gap-2"
@@ -152,7 +157,7 @@ const Login = () => {
             <FcGoogle className="text-xl" /> Sign in with Google
           </button>
 
-          {/* Footer */}
+          {/* Register Link */}
           <p className="mt-4 text-center text-sm">
             Don’t have an account?{" "}
             <Link

@@ -4,7 +4,7 @@ import useAuth from "./useAuth";
 import { useEffect } from "react";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: `a12-micro-task-earning-server.vercel.app`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -24,7 +24,7 @@ const useAxiosSecure = () => {
             config.headers.Authorization = `Bearer ${token}`;
           }
         }
-        console.log("🔐 Sending token:", config.headers.Authorization);
+        // console.log("🔐 Sending token:", config.headers.Authorization);
         return config;
       },
       (error) => Promise.reject(error)

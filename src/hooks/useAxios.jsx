@@ -2,8 +2,8 @@ import axios from "axios";
 
 const useAxios = () => {
   const axiosSecure = axios.create({
-    baseURL: "http://localhost:5000", // ✅ your backend URL
-    withCredentials: false,           // set to true if using cookies
+    baseURL: `a12-micro-task-earning-server.vercel.app`, 
+    withCredentials: false,           
   });
 
   return axiosSecure;

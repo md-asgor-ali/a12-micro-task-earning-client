@@ -14,7 +14,7 @@ const TaskList = () => {
     const fetchTasks = async () => {
       try {
         const res = await axiosSecure.get("/tasks/available");
-        console.log("Tasks response:", res.data);
+        // console.log("Tasks response:", res.data);
 
         if (Array.isArray(res.data)) {
           setTasks(res.data);

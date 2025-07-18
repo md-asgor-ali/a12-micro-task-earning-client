@@ -71,7 +71,7 @@ const AddTask = () => {
       };
 
       // ✅ Check if all values are correct
-      console.log("Submitting task:", task);
+      // console.log("Submitting task:", task);
 
       await axiosSecure.post("/tasks", task);
 

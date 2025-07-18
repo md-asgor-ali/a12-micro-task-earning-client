@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
 import axios from "axios";
-import { updateProfile } from "firebase/auth"; // ✅ Firebase profile update
+import { updateProfile } from "firebase/auth"; 
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Register = () => {
@@ -59,7 +59,7 @@ const Register = () => {
     try {
       // Firebase Auth create user
       const result = await createUser(data.email, data.password);
-      console.log(result.user);
+      // console.log(result.user);
 
       // Update Firebase profile
       await updateProfile(result.user, {
@@ -74,7 +74,7 @@ const Register = () => {
         photoURL: profilePic,
         role: data.role,
       };
-      console.log()
+    
 
       // Send to backend — backend will assign coins based on role
       await axiosSecure.post("/users", userData);
