@@ -6,79 +6,107 @@ const MySubmissions = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const [submissions, setSubmissions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     if (user?.email) {
       axiosSecure
         .get(`/submissions/worker?email=${user.email}`)
         .then((res) => {
-          if (Array.isArray(res.data)) {
-            setSubmissions(res.data);
-          } else {
-            setSubmissions([]);
-          }
+          setSubmissions(res.data || []);
+          setCurrentPage(1); // Reset to first page when new data arrives
         })
-        .catch((err) => {
-          console.error("Error fetching submissions:", err);
+        .catch((error) => {
+          console.error("Error fetching submissions:", error);
           setSubmissions([]);
         });
     }
-  }, [user, axiosSecure]);
+  }, [user?.email, axiosSecure]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "approved":
-        return "text-green-600 font-semibold";
-      case "pending":
-        return "text-yellow-600 font-semibold";
-      case "rejected":
-        return "text-red-600 font-semibold";
-      default:
-        return "";
+  // Pagination logic
+  const totalPages = Math.ceil(submissions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentItems = submissions.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      setCurrentPage(pageNum);
     }
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 max-w-6xl mx-auto">
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-center">
-        My Submissions
-      </h2>
+    <div className="p-4 max-w-6xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-center">My Submissions</h2>
 
       {submissions.length === 0 ? (
-        <p className="text-gray-600 text-sm md:text-base text-center">
-          You haven’t submitted any tasks yet.
-        </p>
+        <p className="text-center text-gray-600">No submissions found.</p>
       ) : (
-        <div className="overflow-x-auto bg-white p-4 rounded shadow">
-          <table className="table w-full text-sm md:text-base">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="p-2">#</th>
-                <th className="p-2">Task Title</th>
-                <th className="p-2">Pay</th>
-                <th className="p-2">Buyer</th>
-                <th className="p-2">Submitted</th>
-                <th className="p-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissions.map((sub, index) => (
-                <tr key={sub._id} className="hover:bg-gray-50">
-                  <td className="p-2">{index + 1}</td>
-                  <td className="p-2 break-words max-w-xs">{sub.task_title}</td>
-                  <td className="p-2">{sub.payable_amount}</td>
-                  <td className="p-2">{sub.buyer_name || "N/A"}</td>
-                  <td className="p-2">
-                    {new Date(sub.submittedAt).toLocaleDateString()}
-                  </td>
-                  <td className={`p-2 ${getStatusColor(sub.status)}`}>
-                    {sub.status}
-                  </td>
+        <>
+          <div className="overflow-x-auto bg-white rounded shadow">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="p-2">#</th>
+                  <th className="p-2">Task</th>
+                  <th className="p-2">Pay</th>
+                  <th className="p-2">Buyer</th>
+                  <th className="p-2">Submitted</th>
+                  <th className="p-2">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {currentItems.map((sub, idx) => (
+                  <tr key={sub._id}>
+                    <td className="p-2">{startIndex + idx + 1}</td>
+                    <td className="p-2">{sub.task_title}</td>
+                    <td className="p-2">{sub.payable_amount}</td>
+                    <td className="p-2">{sub.buyer_name || "N/A"}</td>
+                    <td className="p-2">
+                      {sub.submittedAt
+                        ? new Date(sub.submittedAt).toLocaleDateString()
+                        : "N/A"}
+                    </td>
+                    <td className="p-2 capitalize font-semibold text-blue-600">
+                      {sub.status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="mt-4 flex justify-center gap-2 flex-wrap">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1 border rounded ${
+                  currentPage === page
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
