@@ -45,6 +45,11 @@ const useAxiosSecure = () => {
             .catch(() => {});
         }
 
+        if (status === 403) {
+          // 🟠 Forbidden
+          navigate("/forbidden");
+        }
+
         return Promise.reject(error);
       }
     );
@@ -56,7 +61,7 @@ const useAxiosSecure = () => {
     };
   }, [user, logOut, navigate]);
 
-  return axiosSecure; // ✅ MUST return in array format
+  return axiosSecure; 
 };
 
 export default useAxiosSecure;

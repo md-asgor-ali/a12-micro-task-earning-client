@@ -1,13 +1,21 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../layouts/RootLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
+import {
+  PrivateRoute,
+  AdminRoute,
+  BuyerRoute,
+  WorkerRoute,
+} from "../ProtectedRoutes";
 
 // Pages
 import Home from "../pages/Home/Home";
 import Register from "../pages/Authentication/Register";
 import Login from "../pages/Authentication/Login";
-import DashboardHome from "../pages/Dashboard/DashboardHome";
+import Forbidden from "../pages/Forbidden/Forbidden";
+
+import RoleBasedHome from "../pages/Dashboard/RoleBasedHome";
 import BuyerHome from "../pages/Dashboard/BuyerHome";
 import WorkerHome from "../pages/Dashboard/WorkerHome";
 import AdminHome from "../pages/Dashboard/AdminHome";
@@ -20,100 +28,153 @@ import ManageTasks from "../pages/Dashboard/ManageTasks";
 import TaskList from "../pages/Dashboard/TaskList";
 import Withdrawals from "../pages/Dashboard/Withdrawals";
 import Payment from "../pages/Dashboard/Payment/Payment";
-import RoleBasedHome from "../pages/Dashboard/RoleBasedHome";
 import TaskDetails from "../pages/Dashboard/TaskDetails";
 import MySubmissions from "../pages/Dashboard/MySubmissions";
+import NotFound from "../pages/NotFound/NotFound";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
+      { index: true, element: <Home /> },
+      { path: "forbidden", element: <Forbidden /> },
     ],
   },
   {
     path: "/",
     element: <AuthLayout />,
     children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
     ],
   },
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
     children: [
-      {
-        index: true,
-        element: <RoleBasedHome />,
-      },
+      { index: true, element: <RoleBasedHome /> },
 
       {
         path: "buyer-home",
-        element: <BuyerHome />,
+        element: (
+          <BuyerRoute>
+            <BuyerHome />
+          </BuyerRoute>
+        ),
       },
       {
         path: "worker-home",
-        element: <WorkerHome />,
+        element: (
+          <WorkerRoute>
+            <WorkerHome />
+          </WorkerRoute>
+        ),
       },
       {
         path: "admin-home",
-        element: <AdminHome />,
+        element: (
+          <AdminRoute>
+            <AdminHome />
+          </AdminRoute>
+        ),
       },
       {
         path: "add-task",
-        element: <AddTask />,
+        element: (
+          <BuyerRoute>
+            <AddTask />
+          </BuyerRoute>
+        ),
       },
       {
         path: "my-tasks",
-        element: <MyTasks />,
+        element: (
+          <BuyerRoute>
+            <MyTasks />
+          </BuyerRoute>
+        ),
       },
       {
         path: "purchase-coin",
-        element: <PurchaseCoin />,
+        element: (
+          <BuyerRoute>
+            <PurchaseCoin />
+          </BuyerRoute>
+        ),
       },
       {
         path: "payment/:coins",
-        element: <Payment />,
+        element: (
+          <BuyerRoute>
+            <Payment />
+          </BuyerRoute>
+        ),
       },
       {
         path: "payment-history",
-        element: <PaymentHistory />,
+        element: (
+          <BuyerRoute>
+            <PaymentHistory />
+          </BuyerRoute>
+        ),
       },
       {
         path: "manage-users",
-        element: <ManageUsers />,
+        element: (
+          <AdminRoute>
+            <ManageUsers />
+          </AdminRoute>
+        ),
       },
       {
         path: "manage-tasks",
-        element: <ManageTasks />,
+        element: (
+          <AdminRoute>
+            <ManageTasks />
+          </AdminRoute>
+        ),
       },
       {
         path: "tasklist",
-        element: <TaskList />,
+        element: (
+          <WorkerRoute>
+            <TaskList />
+          </WorkerRoute>
+        ),
       },
       {
-        path: "/dashboard/task-details/:id",
-        element: <TaskDetails />,
+        path: "task-details/:id",
+        element: (
+          <WorkerRoute>
+            <TaskDetails />
+          </WorkerRoute>
+        ),
       },
       {
         path: "submissions",
-        element: <MySubmissions />,
+        element: (
+          <WorkerRoute>
+            <MySubmissions />
+          </WorkerRoute>
+        ),
       },
       {
         path: "withdrawals",
-        element: <Withdrawals />,
+        element: (
+          <WorkerRoute>
+            <Withdrawals />
+          </WorkerRoute>
+        ),
       },
     ],
   },
+  {
+    path:'*',
+    element: <NotFound />,
+  }
 ]);
