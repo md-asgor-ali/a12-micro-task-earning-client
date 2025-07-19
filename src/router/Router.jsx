@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router";
 import RootLayout from "../layouts/RootLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -7,7 +7,7 @@ import {
   AdminRoute,
   BuyerRoute,
   WorkerRoute,
-} from "../ProtectedRoutes";
+} from "../routes/ProtectedRoutes";
 
 // Pages
 import Home from "../pages/Home/Home";

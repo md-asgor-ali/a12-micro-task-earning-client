@@ -14,8 +14,11 @@ const MySubmissions = () => {
       axiosSecure
         .get(`/submissions/worker?email=${user.email}`)
         .then((res) => {
-          setSubmissions(res.data || []);
-          setCurrentPage(1); // Reset to first page when new data arrives
+          const submissionArray = Array.isArray(res.data.submissions)
+            ? res.data.submissions
+            :  [];
+          setSubmissions(submissionArray);
+          setCurrentPage(1); 
         })
         .catch((error) => {
           console.error("Error fetching submissions:", error);

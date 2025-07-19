@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
 
 const TaskList = () => {
+    const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +15,9 @@ const TaskList = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axiosSecure.get("/tasks/available");
+        const res = await axiosSecure.get("/tasks/available",{
+           params: { email: user?.email }, // pass current worker email
+        });
         // console.log("Tasks response:", res.data);
 
         if (Array.isArray(res.data)) {

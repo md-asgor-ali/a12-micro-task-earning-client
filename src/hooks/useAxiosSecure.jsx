@@ -19,7 +19,7 @@ const useAxiosSecure = () => {
     const requestInterceptor = axiosSecure.interceptors.request.use(
       async (config) => {
         if (user) {
-          const token = await user.getIdToken(); // ✅ Firebase JWT
+          const token = await user.getIdToken(); 
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
