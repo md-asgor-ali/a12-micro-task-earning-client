@@ -6,15 +6,24 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { updateProfile } from "firebase/auth"; 
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useRole from "../../hooks/useRole";
 
 const Register = () => {
   const { createUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { role } = useRole();
   const axiosSecure = useAxiosSecure();
-
   const [profilePic, setProfilePic] = useState("");
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+    // Default dashboard redirect based on role
+  const dashboardLink =
+    role === "admin"
+      ? "/dashboard/admin-home"
+      : role === "buyer"
+      ? "/dashboard/buyer-home"
+      : "/dashboard/worker-home";
 
   const {
     register,
@@ -87,7 +96,7 @@ const Register = () => {
       });
 
       reset();
-      navigate("/dashboard");
+      navigate(dashboardLink);
     } catch (error) {
       console.error("Registration error:", error);
       if (error.code === "auth/email-already-in-use") {
