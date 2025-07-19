@@ -28,7 +28,7 @@ const Footer = () => {
             <li><Link to="/dashboard" className="hover:underline">Dashboard</Link></li>
             <li>
               <a
-                href="https://github.com/your-client-repo"
+                href="https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-md-asgor-ali"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:underline"
@@ -43,13 +43,13 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold text-warning mb-3">Follow Us</h3>
           <div className="flex gap-4 text-2xl">
-            <a href="https://github.com/your-github" target="_blank" rel="noreferrer" className="hover:text-warning">
+            <a href="https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-md-asgor-ali" target="_blank" rel="noreferrer" className="hover:text-warning">
               <FaGithub />
             </a>
-            <a href="https://www.linkedin.com/in/your-profile" target="_blank" rel="noreferrer" className="hover:text-warning">
+            <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="hover:text-warning">
               <FaLinkedin />
             </a>
-            <a href="https://facebook.com/your-profile" target="_blank" rel="noreferrer" className="hover:text-warning">
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-warning">
               <FaFacebook />
             </a>
           </div>

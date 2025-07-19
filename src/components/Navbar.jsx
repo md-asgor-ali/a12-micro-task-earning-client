@@ -80,7 +80,7 @@ const Navbar = () => {
                 <FaUserPlus /> Register
               </Link>
               <a
-                href="https://github.com/your-client-repo"
+                href="https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-md-asgor-ali"
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-outline btn-warning font-bold flex items-center gap-1"
@@ -98,7 +98,7 @@ const Navbar = () => {
               </Link>
 
               <a
-                href="https://github.com/your-client-repo"
+                href="https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-md-asgor-ali"
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-outline btn-warning font-bold flex items-center gap-1"
