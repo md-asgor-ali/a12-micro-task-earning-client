@@ -43,7 +43,8 @@ export const router = createBrowserRouter([
         element: <Home />,
         hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>,
       },
-      { path: "forbidden", element: <Forbidden /> },
+      { path: "forbidden",
+        element: <Forbidden /> },
     ],
   },
   {

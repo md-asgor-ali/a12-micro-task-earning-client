@@ -24,6 +24,8 @@ export const AdminRoute = ({ children }) => {
 
   if (!user) return <Navigate to="/login" replace />;
 
+  if (!role) return <p>Loading Role...</p>;
+
   if (role !== "Admin") return <Forbidden />;
 
   return children;
@@ -36,6 +38,8 @@ export const BuyerRoute = ({ children }) => {
   if (loading || roleLoading) return <p>Loading...</p>;
 
   if (!user) return <Navigate to="/login" replace />;
+  
+  if (!role) return <p>Loading Role...</p>;
 
   if (role !== "Buyer") return <Forbidden />;
 
@@ -49,6 +53,8 @@ export const WorkerRoute = ({ children }) => {
   if (loading || roleLoading) return <p>Loading...</p>;
 
   if (!user) return <Navigate to="/login" replace />;
+
+  if (!role) return <p>Loading Role...</p>;
 
   if (role !== "Worker") return <Forbidden />;
 

@@ -65,13 +65,14 @@ const Login = () => {
         role: "user", // default role
       };
 
-      // Save to DB if not exists
-      await axiosSecure.post("/users", userData).catch((err) => {
-        if (err.response?.status !== 400) {
-          throw err;
-        }
-      });
-
+    // Try to create user in DB
+    try {
+      await axiosSecure.post("/users", userData);
+    } catch (err) {
+      if (err.response?.status !== 409) {
+        throw err; // Only ignore duplicate user error
+      }
+    }
       Swal.fire({
         icon: "success",
         title: "Logged in with Google!",
