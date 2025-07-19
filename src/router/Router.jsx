@@ -31,13 +31,18 @@ import Payment from "../pages/Dashboard/Payment/Payment";
 import TaskDetails from "../pages/Dashboard/TaskDetails";
 import MySubmissions from "../pages/Dashboard/MySubmissions";
 import NotFound from "../pages/NotFound/NotFound";
+import LoadingSpinner from "./../pages/LoadingSpinner/LoadingSpinner";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <Home /> },
+      {
+        index: true,
+        element: <Home />,
+        hydrateFallbackElement: <LoadingSpinner></LoadingSpinner>,
+      },
       { path: "forbidden", element: <Forbidden /> },
     ],
   },
@@ -174,7 +179,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path:'*',
+    path: "*",
     element: <NotFound />,
-  }
+  },
 ]);
