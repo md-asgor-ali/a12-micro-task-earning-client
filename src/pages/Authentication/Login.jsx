@@ -15,9 +15,9 @@ const Login = () => {
 
   // Default dashboard redirect based on role
   const dashboardLink =
-    role === "admin"
+    role === "Admin"
       ? "/dashboard/admin-home"
-      : role === "buyer"
+      : role === "Buyer"
       ? "/dashboard/buyer-home"
       : "/dashboard/worker-home";
 
@@ -33,23 +33,45 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
 
   // ✅ Email/password login handler
-  const onSubmit = async (data) => {
-    setErrorMsg("");
-    try {
-      await signIn(data.email, data.password);
+const onSubmit = async (data) => {
+  setErrorMsg("");
 
-      Swal.fire({
-        icon: "success",
-        title: "Login Successful",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+  try {
+    const result = await signIn(data.email, data.password);
+    const user = result.user;
 
-      navigate(from, { replace: true });
-    } catch (error) {
-      setErrorMsg("Invalid email or password.");
-    }
-  };
+    // ✅ Get Firebase JWT token
+    const token = await user.getIdToken();
+
+    // ✅ Set token to axiosSecure headers
+    axiosSecure.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    Swal.fire({
+      icon: "success",
+      title: "Login Successful",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+    // ✅ Now get the role
+    const userdata = await axiosSecure.get(`/users/${user.email}`);
+    const userRole = userdata.data.role;
+
+    const dashboardLink =
+      userRole === "Admin"
+        ? "/dashboard/admin-home"
+        : userRole === "Buyer"
+        ? "/dashboard/buyer-home"
+        : "/dashboard/worker-home";
+
+    navigate(dashboardLink);
+  } catch (error) {
+    console.error("Login failed:", error);
+    setErrorMsg("Invalid email or password.");
+  }
+};
+
+
 
   // ✅ Google login handler
   const handleGoogleLogin = async () => {
@@ -65,20 +87,30 @@ const Login = () => {
         role: "user", // default role
       };
 
-    // Try to create user in DB
-    try {
-      await axiosSecure.post("/users", userData);
-    } catch (err) {
-      if (err.response?.status !== 409) {
-        throw err; // Only ignore duplicate user error
+      // Try to create user in DB
+      try {
+        await axiosSecure.post("/users", userData);
+      } catch (err) {
+        if (err.response?.status !== 409) {
+          throw err; // Only ignore duplicate user error
+        }
       }
-    }
       Swal.fire({
         icon: "success",
         title: "Logged in with Google!",
         timer: 1500,
         showConfirmButton: false,
       });
+
+      const userdata = await axiosSecure.get(`/users/${user.email}`);
+      const userRole = userdata.data.role;
+      console.log(userdata);
+      const dashboardLink =
+        userRole === "Admin"
+          ? "/dashboard/admin-home"
+          : userRole === "Buyer"
+          ? "/dashboard/buyer-home"
+          : "/dashboard/worker-home";
 
       navigate(dashboardLink);
     } catch (error) {
@@ -117,7 +149,9 @@ const Login = () => {
 
             {/* Password */}
             <div>
-              <label className="label font-semibold text-blue-800">Password</label>
+              <label className="label font-semibold text-blue-800">
+                Password
+              </label>
               <input
                 type="password"
                 {...register("password", {
@@ -136,7 +170,9 @@ const Login = () => {
 
             {/* Error message */}
             {errorMsg && (
-              <p className="text-red-600 font-semibold text-center">{errorMsg}</p>
+              <p className="text-red-600 font-semibold text-center">
+                {errorMsg}
+              </p>
             )}
 
             {/* Submit */}

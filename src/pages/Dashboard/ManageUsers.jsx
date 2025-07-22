@@ -8,7 +8,7 @@ const ManageUsers = () => {
 
   useEffect(() => {
     axiosSecure
-      .get("/admin/users") // ✅ backend route is /admin/users
+      .get("/admin/users") // 
       .then((res) => {
         const data = res.data;
         if (Array.isArray(data)) {

@@ -3,6 +3,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import useRole from "../../hooks/useRole";
 import { FaCoins, FaHome } from "react-icons/fa";
 import { Link } from "react-router";
+import { FiBell } from "react-icons/fi";
 
 const Topbar = () => {
   const { user } = useContext(AuthContext);
@@ -45,8 +46,8 @@ const Topbar = () => {
         />
 
         <button className="btn btn-circle btn-ghost text-white text-xl relative">
-          <span role="img" aria-label="Notifications">🔔</span>
           <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
+           <FiBell />
         </button>
       </div>
     </div>
