@@ -39,7 +39,7 @@ const MySubmissions = () => {
   };
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="md:p-4 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">My Submissions</h2>
 
       {submissions.length === 0 ? (

@@ -92,10 +92,10 @@ const MyTasks = () => {
   }
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 max-w-7xl mx-auto">
+    <div className=" md:px-8 py-6 max-w-7xl mx-auto">
       <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">My Tasks</h2>
 
-      <div className="overflow-x-auto bg-white p-4 rounded shadow">
+      <div className="overflow-x-auto bg-white md:p-4 rounded shadow">
         <table className="table w-full text-sm md:text-base">
           <thead>
             <tr className="bg-gray-100">

@@ -19,7 +19,7 @@ const PaymentHistory = () => {
   if (isLoading) return <p className="text-center mt-10">Loading payment history...</p>;
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="md:p-4 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-center">Payment History</h2>
       {payments.length === 0 ? (
         <p className="text-center">You haven’t made any purchases yet.</p>
@@ -32,7 +32,7 @@ const PaymentHistory = () => {
                 <th>Transaction ID</th>
                 <th>Coins</th>
                 <th>Amount</th>
-                <th>Payment Method</th>
+                
                 <th>Time</th>
               </tr>
             </thead>
@@ -43,7 +43,7 @@ const PaymentHistory = () => {
                   <td className="text-xs break-all">{payment.transactionId}</td>
                   <td>{payment.coins}</td>
                   <td>${payment.amount}</td>
-                  <td>{payment.paymentMethod?.[0]}</td>
+                  
                   <td>{new Date(payment.createdAt).toLocaleString()}</td>
                 </tr>
               ))}

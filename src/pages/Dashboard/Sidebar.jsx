@@ -1,5 +1,7 @@
-import React, { useContext, useState } from "react";
-import { NavLink } from "react-router";
+// Sidebar.jsx
+
+import React, { useContext } from "react";
+import { NavLink } from "react-router"; // ✅ Fix: should be 'react-router-dom' not 'react-router'
 import { AuthContext } from "../../contexts/AuthContext";
 import useRole from "../../hooks/useRole";
 import {
@@ -11,17 +13,17 @@ import {
   FaUsers,
   FaCoins,
   FaHistory,
-  FaBars,
   FaCog,
+  FaBars
 } from "react-icons/fa";
 import { MdOutlineAddTask } from "react-icons/md";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user } = useContext(AuthContext);
   const { role } = useRole(user?.email);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const normalizedRole = role?.charAt(0).toUpperCase() + role?.slice(1).toLowerCase();
+  const normalizedRole =
+    role?.charAt(0).toUpperCase() + role?.slice(1).toLowerCase();
 
   const menu = {
     Worker: [
@@ -46,21 +48,15 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile Header with Hamburger */}
-      <div className="md:hidden bg-blue-50  px-4 py-3    shadow">
-        <button onClick={() => setIsOpen(true)} className="text-2xl">
-          <FaBars />
-        </button>
-   
-      </div>
 
-      {/* Sidebar */}
+
+      {/* Sidebar Panel */}
       <aside
         className={`bg-blue-50 border-r w-64 min-h-screen z-50 transform fixed md:static top-0 left-0 transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        {/* Close button on mobile */}
+        {/* Close Button (mobile only) */}
         <div className="md:hidden flex justify-end p-3">
           <button
             onClick={() => setIsOpen(false)}
@@ -71,7 +67,7 @@ const Sidebar = () => {
         </div>
 
         <div className="flex flex-col justify-between h-full p-4 pt-0 md:pt-4">
-          {/* Navigation */}
+          {/* Navigation Links */}
           <nav className="space-y-2">
             {menu[normalizedRole]?.map((item) => (
               <NavLink
@@ -84,7 +80,7 @@ const Sidebar = () => {
                       : "text-gray-800 hover:bg-yellow-100"
                   }`
                 }
-                onClick={() => setIsOpen(false)} // close sidebar on mobile after click
+                onClick={() => setIsOpen(false)} // close sidebar on mobile
               >
                 {item.icon}
                 {item.label}
@@ -92,10 +88,10 @@ const Sidebar = () => {
             ))}
           </nav>
 
-          {/* Settings */}
+          {/* Settings Link */}
           <div className="border-t pt-4 mt-4">
             <NavLink
-              to="/dashboard/settings"
+              to="/"
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded font-medium ${
                   isActive

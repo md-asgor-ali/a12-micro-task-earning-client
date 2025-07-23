@@ -115,7 +115,7 @@ const AddTask = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4 ">
           <div>
             <label className="label">Required Workers</label>
             <input
@@ -129,7 +129,7 @@ const AddTask = () => {
           </div>
 
           <div>
-            <label className="label">Payable Amount (per worker)</label>
+            <label className="label ">Payable Amount (per worker)</label>
             <input
               type="number"
               {...register("payable_amount", { required: true, min: 1 })}
