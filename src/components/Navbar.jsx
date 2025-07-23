@@ -11,7 +11,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import useAxiosSecure from "../hooks/useAxiosSecure";
-import useRole from "../hooks/useRole";
+
  
 
 
@@ -20,14 +20,31 @@ const Navbar = () => {
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const [availableCoin, setAvailableCoin] = useState(0);
-   const { role } = useRole();
 
-     const dashboardLink =
-    role === "admin"
-      ? "/dashboard/admin-home"
-      : role === "buyer"
-      ? "/dashboard/buyer-home"
-      : "/dashboard/worker-home";
+
+
+
+
+      const handleDashboardClick = async () => {
+  if (!user?.email) return;
+
+  try {
+    const res = await axiosSecure.get(`/users/${user.email}`);
+    const userRole = res.data.role;
+
+    const dashboardLink =
+      userRole === "Admin"
+        ? "/dashboard/admin-home"
+        : userRole === "Buyer"
+        ? "/dashboard/buyer-home"
+        : "/dashboard/worker-home";
+
+    navigate(dashboardLink);
+  } catch (error) {
+    console.error("Failed to fetch user role:", error);
+  }
+};
+
 
   useEffect(() => {
     if (user?.email) {
@@ -91,7 +108,7 @@ const Navbar = () => {
           ) : (
             <>
               <Link
-                to={dashboardLink}
+                onClick={handleDashboardClick}
                 className="btn btn-outline btn-warning flex items-center gap-1"
               >
                 <FaTachometerAlt /> Dashboard
@@ -210,7 +227,7 @@ const Navbar = () => {
                 <li>
                   <Link
                     className="text-yellow-400 flex items-center gap-2"
-                    to={dashboardLink}
+                    onClick={handleDashboardClick}
                   >
                     <FaTachometerAlt /> Dashboard
                   </Link>
