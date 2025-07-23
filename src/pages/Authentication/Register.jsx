@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../../contexts/AuthContext";
 import Swal from "sweetalert2";
 import axios from "axios";
-import { updateProfile } from "firebase/auth"; 
+import { updateProfile } from "firebase/auth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useRole from "../../hooks/useRole";
 
@@ -17,11 +17,11 @@ const Register = () => {
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-    // Default dashboard redirect based on role
+  // Default dashboard redirect based on role
   const dashboardLink =
-    role === "admin"
+    role === "Admin"
       ? "/dashboard/admin-home"
-      : role === "buyer"
+      : role === "Buyer"
       ? "/dashboard/buyer-home"
       : "/dashboard/worker-home";
 
@@ -43,7 +43,9 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`,
+        `https://api.imgbb.com/1/upload?key=${
+          import.meta.env.VITE_image_upload_key
+        }`,
         formData
       );
       setProfilePic(res.data.data.url);
@@ -54,7 +56,6 @@ const Register = () => {
       setUploading(false);
     }
   };
-
 
   // Handle form submission
   const onSubmit = async (data) => {
@@ -83,10 +84,21 @@ const Register = () => {
         photoURL: profilePic,
         role: data.role,
       };
-    
 
       // Send to backend — backend will assign coins based on role
       await axiosSecure.post("/users", userData);
+      // 5. Fetch user again from backend to get their role
+      const userdata = await axiosSecure.get(`/users/${result.user.email}`);
+      console.log(userdata);
+      const userRole = userdata.data.role;
+
+      // 6. Determine dashboard link
+      const dashboardLink =
+        userRole === "Admin"
+          ? "/dashboard/admin-home"
+          : userRole === "Buyer"
+          ? "/dashboard/buyer-home"
+          : "/dashboard/worker-home";
 
       Swal.fire({
         icon: "success",
@@ -217,7 +229,9 @@ const Register = () => {
 
             {/* Error Message */}
             {errorMsg && (
-              <p className="text-red-600 font-semibold text-center">{errorMsg}</p>
+              <p className="text-red-600 font-semibold text-center">
+                {errorMsg}
+              </p>
             )}
 
             {/* Submit Button */}

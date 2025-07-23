@@ -55,6 +55,7 @@ const onSubmit = async (data) => {
 
     // ✅ Now get the role
     const userdata = await axiosSecure.get(`/users/${user.email}`);
+    
     const userRole = userdata.data.role;
 
     const dashboardLink =
