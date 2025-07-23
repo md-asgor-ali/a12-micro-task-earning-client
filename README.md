@@ -6,8 +6,8 @@ A micro-task-based earning platform where Admins, Buyers, and Workers collaborat
 
 ## 🔐 Admin Login Credentials
 
-- **Email**: `hanif@gmail.com`  
-- **Password**: `123456`
+- **Email**: hanif@gmail.com 
+- **Password**: H123456@
 
 ---
 
