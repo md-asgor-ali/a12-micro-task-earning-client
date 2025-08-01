@@ -85,7 +85,7 @@ const onSubmit = async (data) => {
         name: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        role: "user", // default role
+        role: "Buyer", // default role
       };
 
       // Try to create user in DB
