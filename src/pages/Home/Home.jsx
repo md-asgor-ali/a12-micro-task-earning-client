@@ -5,6 +5,7 @@ import HowItWorks from '../../components/HowItWorks';
 import WhyChooseUs from '../../components/WhyChooseUs';
 import FeaturedBuyers from '../../components/FeaturedBuyers';
 import BestWorkers from '../../components/BestWorkers';
+import HiveNewsletter from '../../components/HiveNewsletter';
 
 const Home = () => {
     return (
@@ -15,6 +16,7 @@ const Home = () => {
             <HowItWorks></HowItWorks>
             <WhyChooseUs></WhyChooseUs>
             <FeaturedBuyers></FeaturedBuyers>
+            <HiveNewsletter></HiveNewsletter>
         </div>
     );
 };

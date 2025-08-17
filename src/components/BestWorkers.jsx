@@ -26,7 +26,7 @@ const BestWorkers = () => {
   return (
     <div className="py-12 bg-white px-4 md:px-8 lg:px-16">
       <h2 className="text-3xl font-bold text-center text-blue-900 mb-10">
-        🏆 Top 6 Best Workers
+         Top 6 Best Workers 🏆
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {topWorkers.map(worker => (
