@@ -4,7 +4,7 @@ import useAxios from '../hooks/useAxios';
 
 
 const BestWorkers = () => {
-  const axiosSecure = useAxios(); // ✅ use your custom axios hook
+  const axiosSecure = useAxios(); 
   const [topWorkers, setTopWorkers] = useState([]);
 
   useEffect(() => {

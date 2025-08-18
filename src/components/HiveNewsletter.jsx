@@ -19,7 +19,7 @@ export default function HiveNewsletter() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mt-4  max-w-xl mx-auto"
+          className="mt-4 max-w-xl mx-auto"
         >
           Stay updated with the latest tasks, earning opportunities, and exclusive
           offers from <span className="font-semibold">TaskHive</span>.  
@@ -39,14 +39,14 @@ export default function HiveNewsletter() {
               type="email"
               required
               placeholder="Enter your email"
-              className="w-full pl-10 pr-4 py-3 rounded-2xl border border-neutral-300 bg-blue-900 
-              focus:ring-2 focus:ring-yellow-400 outline-none  dark:text-white"
+              className="w-full pl-10 pr-4 py-3 rounded-2xl border border-neutral-300 
+              focus:ring-2 focus:ring-yellow-400 outline-none dark:bg-yellow-500 text-gray-900"
             />
           </div>
           <button
             type="submit"
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-900 hover:bg-yellow-600 
-            text-white font-semibold shadow-md transition"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-yellow-500 hover:bg-yellow-600 
+            text-gray-700 font-semibold shadow-md transition"
           >
             Subscribe <FaRegPaperPlane />
           </button>
