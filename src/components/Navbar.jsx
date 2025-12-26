@@ -14,15 +14,11 @@ import useAxiosSecure from "../hooks/useAxiosSecure";
 
  
 
-
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const [availableCoin, setAvailableCoin] = useState(0);
-
-
-
 
 
       const handleDashboardClick = async () => {
