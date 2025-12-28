@@ -93,7 +93,7 @@ const Navbar = () => {
                 <FaUserPlus /> Register
               </Link>
               <a
-                href="https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-md-asgor-ali"
+                href="https://github.com/md-asgor-ali/a12-micro-task-earning-client"
                 target="_blank"
                 rel="noreferrer"
                 className="btn btn-outline btn-warning font-bold flex items-center gap-1"
