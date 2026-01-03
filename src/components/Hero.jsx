@@ -1,67 +1,117 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
+import React, { useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { motion } from "framer-motion";
+import Typewriter from "typewriter-effect";
+import { ArrowRight } from "lucide-react";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
 
 const slides = [
   {
-    id: 1,
-    title: "Unlock Micro-Earning Potential 💰",
+    img: "https://plus.unsplash.com/premium_photo-1679870442588-2e26c81eab42?q=80&w=1332&auto=format&fit=crop",
+    title: "Unlock Micro-Earning Potential",
     desc: "Join TaskHive and start earning from simple online tasks today.",
-    image: "https://plus.unsplash.com/premium_photo-1679870442588-2e26c81eab42?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    cta: "Start Earning",
+    link: "/register",
   },
   {
-    id: 2,
-    title: "Post Tasks. Get Things Done ⚡",
-    desc: "Easily outsource your micro-tasks to a vibrant community of developers.",
-    image: "https://images.unsplash.com/photo-1684560208006-274881cc4c4b?q=80&w=1334&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: "https://images.unsplash.com/photo-1684560208006-274881cc4c4b?q=80&w=1334&auto=format&fit=crop",
+    title: "Post Tasks. Get Things Done",
+    desc: "Outsource your micro-tasks to a skilled and growing workforce.",
+    cta: "Post a Task",
+    link: "/dashboard/buyer",
   },
   {
-    id: 3,
-    title: "Earn Coins. Withdraw Fast 🚀",
-    desc: "Work, earn, and get paid with our seamless and transparent system.",
-    image: "https://images.unsplash.com/photo-1556740772-1a741367b93e?auto=format&fit=crop&w=1400&q=80",
+    img: "https://images.unsplash.com/photo-1556740772-1a741367b93e?auto=format&fit=crop&w=1400&q=80",
+    title: "Earn Coins. Withdraw Fast",
+    desc: "Complete tasks, earn coins, and withdraw securely & quickly.",
+    cta: "View Tasks",
+    link: "/tasks",
   },
 ];
 
 const Hero = () => {
+  const [active, setActive] = useState(0);
+
   return (
-    <div className=" my-8 rounded-xl overflow-hidden  lg:px-16">
+    <section className="relative h-[80vh] overflow-hidden">
       <Swiper
-        spaceBetween={30}
-        centeredSlides={true}
-        autoplay={{
-          delay: 4000,
-          disableOnInteraction: false,
-        }}
+        modules={[Autoplay, Pagination, EffectFade]}
+        effect="fade"
+        loop
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
-        navigation={true}
-        loop={true}
-        modules={[Autoplay, Pagination, Navigation]}
+        onSlideChange={(swiper) => setActive(swiper.realIndex)}
+        className="h-full w-full"
       >
-        {slides.map((slide) => (
-          <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-[500px] md:h-[600px]">
-              <img
-                src={slide.image}
+        {slides.map((slide, i) => (
+          <SwiperSlide key={i}>
+            <div className="relative h-full w-full flex items-center justify-center">
+
+              {/* Background Image */}
+              <motion.img
+                src={slide.img}
                 alt={slide.title}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover brightness-[0.45]"
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1.8, ease: "easeOut" }}
+                draggable={false}
               />
-              <div className="absolute inset-0 bg-black/50 flex flex-col justify-center px-6 md:px-24 text-white">
-                <h2 className="text-3xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">
-                  {slide.title}
-                </h2>
-                <p className="text-sm md:text-lg max-w-xl drop-shadow-md">
+
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
+
+              {/* Content */}
+              <motion.div
+                key={active}
+                className="relative z-10 text-center px-6 max-w-3xl"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <h1 className="text-4xl md:text-6xl font-extrabold mb-4
+                  text-transparent bg-clip-text
+                  bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-500">
+                  <Typewriter
+                    options={{
+                      strings: [slide.title],
+                      autoStart: true,
+                      delay: 55,
+                      cursor: "_",
+                    }}
+                  />
+                </h1>
+
+                <p className="text-lg md:text-xl text-gray-200 mb-8">
                   {slide.desc}
                 </p>
-              </div>
+
+                <a
+                  href={slide.link}
+                  className="inline-flex items-center gap-2 px-8 py-3
+                    rounded-full bg-amber-400 text-black font-semibold
+                    hover:bg-amber-300 transition shadow-lg"
+                >
+                  {slide.cta}
+                  <ArrowRight size={18} />
+                </a>
+
+                {/* Stats */}
+                <div className="mt-10 flex justify-center gap-6 text-sm text-amber-200/90">
+                  <span><strong>50k+</strong> Tasks</span>
+                  <span><strong>20k+</strong> Workers</span>
+                  <span><strong>Fast</strong> Withdrawals</span>
+                </div>
+              </motion.div>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
-    </div>
+    </section>
   );
 };
 

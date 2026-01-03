@@ -45,14 +45,16 @@ export const router = createBrowserRouter([
       },
       { path: "forbidden",
         element: <Forbidden /> },
+        { path: "login", element: <Login /> },
+        { path: "register", element: <Register /> },
     ],
   },
   {
     path: "/",
     element: <AuthLayout />,
     children: [
-      { path: "login", element: <Login /> },
-      { path: "register", element: <Register /> },
+      
+      
     ],
   },
   {

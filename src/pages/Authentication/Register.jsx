@@ -7,6 +7,7 @@ import axios from "axios";
 import { updateProfile } from "firebase/auth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useRole from "../../hooks/useRole";
+import { motion } from "framer-motion";
 
 const Register = () => {
   const { createUser } = useContext(AuthContext);
@@ -17,7 +18,7 @@ const Register = () => {
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Default dashboard redirect based on role
+  // Default dashboard redirect
   const dashboardLink =
     role === "Admin"
       ? "/dashboard/admin-home"
@@ -50,34 +51,29 @@ const Register = () => {
       );
       setProfilePic(res.data.data.url);
     } catch (err) {
-      console.error("Image upload error:", err.response?.data || err.message);
+      console.error("Image upload error:", err);
       setErrorMsg("Image upload failed.");
     } finally {
       setUploading(false);
     }
   };
 
-  // Handle form submission
+  // Form submission
   const onSubmit = async (data) => {
     setErrorMsg("");
-
     if (!profilePic) {
       setErrorMsg("Please upload your profile picture.");
       return;
     }
 
     try {
-      // Firebase Auth create user
       const result = await createUser(data.email, data.password);
-      // console.log(result.user);
 
-      // Update Firebase profile
       await updateProfile(result.user, {
         displayName: data.name,
         photoURL: profilePic,
       });
 
-      // Construct user data for backend
       const userData = {
         name: data.name,
         email: data.email,
@@ -85,14 +81,10 @@ const Register = () => {
         role: data.role,
       };
 
-      // Send to backend — backend will assign coins based on role
       await axiosSecure.post("/users", userData);
-      // 5. Fetch user again from backend to get their role
       const userdata = await axiosSecure.get(`/users/${result.user.email}`);
-      console.log(userdata);
       const userRole = userdata.data.role;
 
-      // 6. Determine dashboard link
       const dashboardLink =
         userRole === "Admin"
           ? "/dashboard/admin-home"
@@ -119,142 +111,166 @@ const Register = () => {
     }
   };
 
+  // Floating background blobs
+  const floatingBlobs = [
+    { size: 250, top: 0, left: 50, delay: 0 },
+    { size: 350, bottom: 0, right: 0, delay: 2 },
+    { size: 200, top: "30%", right: 40, delay: 1 },
+    { size: 180, bottom: "25%", left: 20, delay: 3 },
+  ];
+
   return (
-    <div className="min-h-screen flex justify-center items-center px-4 bg-gradient-to-br from-yellow-50 to-blue-100">
-      <div className="card w-full max-w-md bg-white shadow-2xl border-t-4 border-warning">
-        <div className="card-body">
-          <h2 className="text-3xl font-extrabold text-center text-blue-900 mb-4">
-            Create Account
-          </h2>
+    <section className="relative min-h-screen flex items-center justify-center px-4 bg-blue-900/95 overflow-hidden">
+      {/* Animated background */}
+      {floatingBlobs.map((blob, idx) => (
+        <motion.div
+          key={idx}
+          className="absolute rounded-full bg-yellow-400/20"
+          style={{
+            width: blob.size,
+            height: blob.size,
+            top: blob.top,
+            bottom: blob.bottom,
+            left: blob.left,
+            right: blob.right,
+          }}
+          animate={{ x: [0, 600, 0], y: [0, 400, 0] }}
+          transition={{
+            duration: 25 + blob.delay,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+      ))}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Name */}
-            <div>
-              <label className="label font-semibold text-blue-800">Name</label>
-              <input
-                type="text"
-                {...register("name", { required: "Name is required" })}
-                className="input input-bordered w-full"
-              />
-              {errors.name && (
-                <p className="text-red-500">{errors.name.message}</p>
-              )}
-            </div>
+      {/* Registration card */}
+      <motion.div
+        className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl p-8"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <h2 className="text-3xl font-extrabold text-center text-yellow-400 mb-6">
+          TaskHive Registration
+        </h2>
 
-            {/* Profile Picture */}
-            <div>
-              <label className="label font-semibold text-blue-800">
-                Profile Picture
-              </label>
-              <input
-                type="file"
-                onChange={handleImageUpload}
-                className="file-input file-input-bordered w-full"
-              />
-              {uploading && (
-                <p className="text-sm text-blue-500">Uploading...</p>
-              )}
-              {profilePic && (
-                <img
-                  src={profilePic}
-                  alt="Preview"
-                  className="w-16 h-16 rounded-full border mt-2"
-                />
-              )}
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="label font-semibold text-blue-800">Email</label>
-              <input
-                type="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Invalid email format",
-                  },
-                })}
-                className="input input-bordered w-full"
-              />
-              {errors.email && (
-                <p className="text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="label font-semibold text-blue-800">
-                Password
-              </label>
-              <input
-                type="password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                  pattern: {
-                    value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/,
-                    message:
-                      "Include uppercase, number & special character (!@#$%)",
-                  },
-                })}
-                className="input input-bordered w-full"
-              />
-              {errors.password && (
-                <p className="text-red-500">{errors.password.message}</p>
-              )}
-            </div>
-
-            {/* Role */}
-            <div>
-              <label className="label font-semibold text-blue-800">Role</label>
-              <select
-                {...register("role", { required: "Role is required" })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select a role</option>
-                <option value="Worker">Worker</option>
-                <option value="Buyer">Buyer</option>
-              </select>
-              {errors.role && (
-                <p className="text-red-500">{errors.role.message}</p>
-              )}
-              <small className="text-gray-500">
-                Workers get 10 coins, Buyers get 50 coins upon registration.
-              </small>
-            </div>
-
-            {/* Error Message */}
-            {errorMsg && (
-              <p className="text-red-600 font-semibold text-center">
-                {errorMsg}
-              </p>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="label font-semibold text-white">Name</label>
+            <input
+              type="text"
+              {...register("name", { required: "Name is required" })}
+              className="input input-bordered w-full bg-white/10 text-white border-white/30 focus:border-yellow-400 focus:ring-yellow-400"
+            />
+            {errors.name && (
+              <p className="text-red-400">{errors.name.message}</p>
             )}
+          </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="btn btn-warning w-full text-white font-bold"
-            >
-              Register
-            </button>
-          </form>
+          {/* Profile Picture */}
+          <div>
+            <label className="label font-semibold text-white">
+              Profile Picture
+            </label>
+            <input
+              type="file"
+              onChange={handleImageUpload}
+              className="file-input file-input-bordered w-full bg-white/10 text-white border-white/30"
+            />
+            {uploading && (
+              <p className="text-sm text-yellow-400">Uploading...</p>
+            )}
+            {profilePic && (
+              <img
+                src={profilePic}
+                alt="Preview"
+                className="w-16 h-16 rounded-full border mt-2"
+              />
+            )}
+          </div>
 
-          <p className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-blue-700 font-semibold hover:underline"
+          {/* Email */}
+          <div>
+            <label className="label font-semibold text-white">Email</label>
+            <input
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
+              })}
+              className="input input-bordered w-full bg-white/10 text-white border-white/30 focus:border-yellow-400 focus:ring-yellow-400"
+            />
+            {errors.email && (
+              <p className="text-red-400">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="label font-semibold text-white">Password</label>
+            <input
+              type="password"
+              {...register("password", {
+                required: "Password is required",
+                minLength: { value: 6, message: "At least 6 characters" },
+                pattern: {
+                  value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/,
+                  message: "Include uppercase, number & special char",
+                },
+              })}
+              className="input input-bordered w-full bg-white/10 text-white border-white/30 focus:border-yellow-400 focus:ring-yellow-400"
+            />
+            {errors.password && (
+              <p className="text-red-400">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Role */}
+          <div className="relative z-20">
+            <label className="label font-semibold text-white">Role</label>
+            <select
+              {...register("role", { required: "Role is required" })}
+              className="select select-bordered w-full bg-white/20 text-white border-white/30 focus:border-yellow-400 focus:ring-yellow-400 appearance-none"
+              style={{ zIndex: 50 }} // Ensure dropdown appears above other elements
             >
-              Login
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+              <option value="">Select a role</option>
+              <option value="Worker">Worker</option>
+              <option value="Buyer">Buyer</option>
+            </select>
+            {errors.role && (
+              <p className="text-red-400 mt-1">{errors.role.message}</p>
+            )}
+            <small className="text-gray-300">
+              Workers get 10 coins, Buyers get 50 coins upon registration.
+            </small>
+          </div>
+
+          {/* Error Message */}
+          {errorMsg && (
+            <p className="text-red-500 font-semibold text-center">{errorMsg}</p>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="btn w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold hover:from-yellow-300 hover:to-yellow-400 shadow-lg"
+          >
+            Register
+          </button>
+        </form>
+
+        <p className="mt-4 text-center text-white/80 text-sm">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-yellow-400 font-semibold hover:underline"
+          >
+            Login
+          </Link>
+        </p>
+      </motion.div>
+    </section>
   );
 };
 

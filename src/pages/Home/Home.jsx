@@ -6,6 +6,8 @@ import WhyChooseUs from '../../components/WhyChooseUs';
 import FeaturedBuyers from '../../components/FeaturedBuyers';
 import BestWorkers from '../../components/BestWorkers';
 import HiveNewsletter from '../../components/HiveNewsletter';
+import FAQ from '../../components/FAQ';
+import SupportAndStats from '../../components/SupportAndStats';
 
 const Home = () => {
     return (
@@ -14,9 +16,11 @@ const Home = () => {
             <BestWorkers></BestWorkers>
             <Testimonial></Testimonial>
             <HowItWorks></HowItWorks>
-            <WhyChooseUs></WhyChooseUs>
-            <FeaturedBuyers></FeaturedBuyers>
-            <HiveNewsletter></HiveNewsletter>
+            <FAQ></FAQ>
+            <SupportAndStats></SupportAndStats>
+            {/* <WhyChooseUs></WhyChooseUs> */}
+            {/* <FeaturedBuyers></FeaturedBuyers> */}
+            {/* <HiveNewsletter></HiveNewsletter> */}
         </div>
     );
 };
